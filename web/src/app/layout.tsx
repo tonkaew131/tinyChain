@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Prompt } from 'next/font/google'
+import { Prompt } from "next/font/google";
 import "./globals.css";
+import QueryProvider from "@/components/query-provider";
 
 const fontPrompt = Prompt({
-  weight: ['400'],
+  weight: ["400"],
   subsets: ["latin"],
   display: "swap",
-})
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,10 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${fontPrompt.className} antialiased`}
-      >
-          {children}
+      <body className={`${fontPrompt.className} antialiased bg-white`}>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
