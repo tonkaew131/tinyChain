@@ -1,0 +1,24 @@
+{
+    "name": "contracts",
+    "module": "app.ts",
+    "type": "module",
+    "scripts": {
+        "hh:compile": "npx hardhat compile",
+        "hh:deploy": "npx hardhat run scripts/deploy.js --network sepolia",
+        "hh:interact": "npx hardhat run scripts/interact.js",
+        "format": "prettier --write --list-different ."
+    },
+    "devDependencies": {
+        "@nomiclabs/hardhat-ethers": "^2.2.3",
+        "@types/bun": "latest",
+        "ethers": "^5.0.0",
+        "hardhat": "^2.22.18",
+        "prettier": "^3.4.2"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "dotenv": "^16.4.7"
+    }
+}

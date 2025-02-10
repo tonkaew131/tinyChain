@@ -1,0 +1,19 @@
+{
+  "name": "tinychain",
+  "version": "1.0.0",
+  "workspaces": [
+    "api",
+    "contracts",
+    "web"
+  ],
+  "scripts": {
+    "format": "bun --filter '*' format",
+    "dev": "dotenv -- bun --filter '*' dev",
+    "hh:compile": "dotenv -- bun --filter 'contracts' hh:compile",
+    "hh:deploy": "dotenv -- bun --filter 'contracts' hh:deploy",
+    "hh:interact": "dotenv -- bun --filter 'contracts' hh:interact"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^8.0.0"
+  }
+}
