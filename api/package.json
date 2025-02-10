@@ -7,8 +7,9 @@
         "format": "prettier --write --list-different ."
     },
     "dependencies": {
+        "@elysiajs/swagger": "^1.2.0",
         "elysia": "latest",
-        "ethers": "^5.0.0"
+        "ethers": "^6.0.0"
     },
     "devDependencies": {
         "bun-types": "latest",

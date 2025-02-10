@@ -1,9 +1,31 @@
 import { helloWorldContract } from '@/contracts/HelloWorld';
-import Elysia from 'elysia';
+import Elysia, { t } from 'elysia';
 
 export const HelloWorldRoute = new Elysia({
-    prefix: 'hello-world',
-}).get('/', async () => {
-    const message = await helloWorldContract.message()
-    console.log("The message is: " + message)
-});
+    prefix: 'contracts/hello-world',
+})
+    .get('/', async () => {
+        const message = await helloWorldContract.message();
+
+        return {
+            message: message,
+        };
+    })
+    .post(
+        '/',
+        async (context) => {
+            const { message } = context.body;
+
+            const tx = await helloWorldContract.update(message);
+            // await tx.wait()
+
+            return {
+                message: message,
+            };
+        },
+        {
+            body: t.Object({
+                message: t.String(),
+            }),
+        }
+    );
