@@ -18,7 +18,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
     carbonCredits: 5000,
     price: 25,
     images: [
-      "/placeholder.svg?height=400&width=600",
+      "/projects/1.jpeg",
       "/placeholder.svg?height=400&width=600",
       "/placeholder.svg?height=400&width=600",
     ],
@@ -53,7 +53,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="container py-10">
+    <div className="container py-10 mx-auto">
       <div className="flex flex-col space-y-8">
         <div>
           <Button asChild variant="ghost" size="sm" className="mb-4">
