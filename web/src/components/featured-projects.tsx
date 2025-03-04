@@ -23,7 +23,7 @@ export function FeaturedProjects() {
       location: "California, USA",
       carbonCredits: 3500,
       price: 30,
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/projects/2.png",
       type: "Forestry",
     },
     {
@@ -33,7 +33,7 @@ export function FeaturedProjects() {
       location: "Wisconsin, USA",
       carbonCredits: 7500,
       price: 22,
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/projects/3.jpg",
       type: "Livestock",
     },
   ]
