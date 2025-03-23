@@ -1,6 +1,8 @@
 import path from 'node:path';
-import { getContractsDir } from '@/utils';
+
 import { ethers } from 'ethers';
+
+import { getContractsDir } from '@api/utils';
 
 const contractPath = 'artifacts/contracts/HelloWorld.sol/HelloWorld.json';
 const contract = JSON.parse(

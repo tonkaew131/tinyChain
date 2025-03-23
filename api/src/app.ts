@@ -1,7 +1,8 @@
 import { Elysia } from 'elysia';
+
+import { AuthRoute } from './routes/auth';
 import { HelloWorldRoute } from './routes/hello-world';
 import swagger from '@elysiajs/swagger';
-import { AuthRoute } from './routes/auth';
 
 const app = new Elysia()
     .use(swagger())

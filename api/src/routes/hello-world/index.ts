@@ -1,4 +1,4 @@
-// import { helloWorldContract } from '@/contracts/HelloWorld';
+// import { helloWorldContract } from '@api/contracts/HelloWorld';
 import Elysia, { t } from 'elysia';
 
 export const HelloWorldRoute = new Elysia({
