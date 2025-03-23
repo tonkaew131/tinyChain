@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "format": "bun --filter '*' format",
-    "dev": "dotenv -- bun --filter '*' dev",
+    "dev": "dotenv -- bun --filter '*' --elide-lines=0 dev",
     "hh:compile": "dotenv -- bun --filter 'contracts' hh:compile",
     "hh:deploy": "dotenv -- bun --filter 'contracts' hh:deploy",
     "hh:interact": "dotenv -- bun --filter 'contracts' hh:interact"
