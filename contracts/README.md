@@ -1,5 +1,9 @@
 # tinychain
 
+## Auto generated contract by
+
+- [OpenZeppelin](https://wizard.openzeppelin.com/#erc721)
+
 To install dependencies:
 
 ```bash
