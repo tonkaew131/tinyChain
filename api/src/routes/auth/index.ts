@@ -12,4 +12,6 @@ const betterAuthView = (context: Context) => {
     }
 };
 
-export const AuthRoute = new Elysia().all('/auth/*', betterAuthView);
+export const AuthRoute = new Elysia({
+    prefix: '/auth',
+}).all('/*', betterAuthView);
