@@ -1,7 +1,9 @@
+import { sql } from 'drizzle-orm';
 import {
     boolean,
     integer,
     pgEnum,
+    pgSequence,
     pgTable,
     text,
     timestamp,
@@ -66,8 +68,13 @@ export const verifications = pgTable('verification', {
     updatedAt: timestamp(),
 });
 
+export const projectIdSequence = pgSequence('project_id_seq', {
+    startWith: 1000,
+});
 export const projects = pgTable('project', {
-    id: text().primaryKey(),
+    id: text()
+        .primaryKey()
+        .default(sql.raw(`'P' || nextval('project_id_seq')::TEXT`)),
     developerId: text()
         .notNull()
         .references(() => projectDevelopers.id),

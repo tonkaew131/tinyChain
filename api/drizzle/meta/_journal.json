@@ -43,6 +43,13 @@
             "when": 1742809576785,
             "tag": "0005_Add developer id to user table",
             "breakpoints": true
+        },
+        {
+            "idx": 6,
+            "version": "7",
+            "when": 1742810204876,
+            "tag": "0006_Add project id seq",
+            "breakpoints": true
         }
     ]
 }
