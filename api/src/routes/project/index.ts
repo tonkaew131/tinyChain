@@ -25,7 +25,6 @@ export const ProjectRoute = new Elysia({
             });
 
             if (!session) return error(401);
-            console.log(session.user);
         },
         {
             body: t.Object({

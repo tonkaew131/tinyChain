@@ -20,4 +20,13 @@ export const auth = betterAuth({
     },
     plugins: [admin(), openAPI()],
     basePath: '/auth',
+    user: {
+        additionalFields: {
+            developerId: {
+                type: 'string',
+                required: false,
+                input: false,
+            },
+        },
+    },
 });

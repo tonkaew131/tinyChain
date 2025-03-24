@@ -36,6 +36,13 @@
             "when": 1742804934473,
             "tag": "0004_Add role plugins",
             "breakpoints": true
+        },
+        {
+            "idx": 5,
+            "version": "7",
+            "when": 1742809576785,
+            "tag": "0005_Add developer id to user table",
+            "breakpoints": true
         }
     ]
 }

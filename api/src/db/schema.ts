@@ -17,6 +17,8 @@ export const users = pgTable('user', {
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().notNull(),
 
+    developerId: text().references(() => projectDevelopers.id),
+
     role: text(),
     banned: boolean(),
     banReason: text(),
