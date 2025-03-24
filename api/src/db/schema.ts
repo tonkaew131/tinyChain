@@ -1,4 +1,10 @@
-import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+    boolean,
+    integer,
+    pgTable,
+    text,
+    timestamp,
+} from 'drizzle-orm/pg-core';
 
 export const users = pgTable('user', {
     id: text().primaryKey(),
@@ -48,4 +54,37 @@ export const verifications = pgTable('verification', {
     expiresAt: timestamp().notNull(),
     createdAt: timestamp(),
     updatedAt: timestamp(),
+});
+
+export const projects = pgTable('project', {
+    id: text().primaryKey(),
+    developerId: text()
+        .notNull()
+        .references(() => projectDevelopers.id),
+
+    name: text().notNull(),
+    description: text().default('').notNull(),
+
+    createdAt: timestamp().defaultNow().notNull(),
+    updatedAt: timestamp().defaultNow().notNull(),
+});
+
+export const projectTokens = pgTable('project_token', {
+    tokenId: integer().primaryKey(),
+    projectId: text()
+        .notNull()
+        .references(() => projects.id, { onDelete: 'cascade' }),
+
+    name: text().notNull(),
+    startDate: timestamp().notNull(),
+    endDate: timestamp(),
+
+    createdAt: timestamp().defaultNow().notNull(),
+});
+
+export const projectDevelopers = pgTable('project_developer', {
+    id: text().primaryKey(),
+    name: text().notNull(),
+
+    createdAt: timestamp().defaultNow().notNull(),
 });

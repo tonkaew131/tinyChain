@@ -8,6 +8,13 @@
             "when": 1742725132080,
             "tag": "0000_Add better auth",
             "breakpoints": true
+        },
+        {
+            "idx": 1,
+            "version": "7",
+            "when": 1742800448703,
+            "tag": "0001_Add projects and developers",
+            "breakpoints": true
         }
     ]
 }
