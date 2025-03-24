@@ -4,6 +4,22 @@
  */
 
 export interface paths {
+    "/swagger/all-json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getSwaggerAll-json"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/project/": {
         parameters: {
             query?: never;
@@ -48,7 +64,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    getProject: {
+    "getSwaggerAll-json": {
         parameters: {
             query?: never;
             header?: never;
@@ -65,6 +81,60 @@ export interface operations {
             };
         };
     };
+    getProject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        status: "ok";
+                        data: {
+                            id: string;
+                            developerId: string;
+                            name: string;
+                            description: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never>;
+                        }[];
+                    };
+                    "multipart/form-data": {
+                        /** @constant */
+                        status: "ok";
+                        data: {
+                            id: string;
+                            developerId: string;
+                            name: string;
+                            description: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never>;
+                        }[];
+                    };
+                    "text/plain": {
+                        /** @constant */
+                        status: "ok";
+                        data: {
+                            id: string;
+                            developerId: string;
+                            name: string;
+                            description: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never>;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
     postProject: {
         parameters: {
             query?: never;
@@ -75,17 +145,14 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    developerId: string;
                     name: string;
                     description?: string;
                 };
                 "multipart/form-data": {
-                    developerId: string;
                     name: string;
                     description?: string;
                 };
                 "text/plain": {
-                    developerId: string;
                     name: string;
                     description?: string;
                 };

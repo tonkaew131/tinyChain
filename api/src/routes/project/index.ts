@@ -1,23 +1,33 @@
 import Elysia, { error, t } from 'elysia';
 
 import { eq } from 'drizzle-orm';
-import { createInsertSchema } from 'drizzle-typebox';
+import { createInsertSchema, createSelectSchema } from 'drizzle-typebox';
 
 import { db } from '@api/db';
 import * as schema from '@api/db/schema';
 import { auth } from '@api/utils/auth';
 
+const projectSelectSchema = createSelectSchema(schema.projects);
 const projectInsertSchema = createInsertSchema(schema.projects);
 
 export const ProjectRoute = new Elysia({
     prefix: '/project',
 })
-    .get('/', async () => {
-        return {
-            status: 'ok' as const,
-            data: await db.select().from(schema.projects),
-        };
-    })
+    .get(
+        '/',
+        async () => {
+            return {
+                status: 'ok' as const,
+                data: await db.select().from(schema.projects),
+            };
+        },
+        {
+            response: t.Object({
+                status: t.Literal('ok'),
+                data: t.Array(projectSelectSchema),
+            }),
+        }
+    )
     .post(
         '/',
         async (context) => {
