@@ -50,6 +50,13 @@
             "when": 1742810204876,
             "tag": "0006_Add project id seq",
             "breakpoints": true
+        },
+        {
+            "idx": 7,
+            "version": "7",
+            "when": 1742810437724,
+            "tag": "0007_Add project developer seq",
+            "breakpoints": true
         }
     ]
 }

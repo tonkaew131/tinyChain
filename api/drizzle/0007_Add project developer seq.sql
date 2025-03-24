@@ -1,0 +1,2 @@
+CREATE SEQUENCE "public"."project_developer_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1000 CACHE 1;--> statement-breakpoint
+ALTER TABLE "project_developer" ALTER COLUMN "id" SET DEFAULT 'D' || nextval('project_developer_id_seq')::TEXT;

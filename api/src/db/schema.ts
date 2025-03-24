@@ -99,8 +99,16 @@ export const projectTokens = pgTable('project_token', {
     createdAt: timestamp().defaultNow().notNull(),
 });
 
+export const projectDeveloperIdSequence = pgSequence(
+    'project_developer_id_seq',
+    {
+        startWith: 1000,
+    }
+);
 export const projectDevelopers = pgTable('project_developer', {
-    id: text().primaryKey(),
+    id: text()
+        .primaryKey()
+        .default(sql.raw(`'D' || nextval('project_developer_id_seq')::TEXT`)),
     name: text().notNull(),
 
     createdAt: timestamp().defaultNow().notNull(),
