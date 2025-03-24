@@ -15,6 +15,20 @@
             "when": 1742800448703,
             "tag": "0001_Add projects and developers",
             "breakpoints": true
+        },
+        {
+            "idx": 2,
+            "version": "7",
+            "when": 1742802348645,
+            "tag": "0002_Add user type",
+            "breakpoints": true
+        },
+        {
+            "idx": 3,
+            "version": "7",
+            "when": 1742803767578,
+            "tag": "0003_Removed type from users",
+            "breakpoints": true
         }
     ]
 }

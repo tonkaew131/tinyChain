@@ -1,11 +1,13 @@
 import {
     boolean,
     integer,
+    pgEnum,
     pgTable,
     text,
     timestamp,
 } from 'drizzle-orm/pg-core';
 
+export const userTypeEnum = pgEnum('user_type', ['admin', 'user']);
 export const users = pgTable('user', {
     id: text().primaryKey(),
     name: text().notNull(),

@@ -12,6 +12,7 @@
         "@elysiajs/swagger": "^1.2.0",
         "better-auth": "^1.2.4",
         "drizzle-orm": "^0.41.0",
+        "drizzle-typebox": "^0.3.0",
         "elysia": "latest",
         "ethers": "^6.0.0",
         "pg": "^8.14.1"
