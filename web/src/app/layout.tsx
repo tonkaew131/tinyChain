@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -27,7 +28,10 @@ export default function RootLayout({
             <div className="flex-1">{children}</div>
             <SiteFooter />
           </div>
+          <Toaster richColors  closeButton/>
+
         </ThemeProvider>
+
       </body>
     </html>
   )
