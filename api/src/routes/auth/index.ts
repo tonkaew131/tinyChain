@@ -12,4 +12,4 @@ const betterAuthView = (context: Context) => {
     }
 };
 
-export const AuthRoute = new Elysia().all('/api/auth/*', betterAuthView);
+export const AuthRoute = new Elysia().all('/auth/*', betterAuthView);
