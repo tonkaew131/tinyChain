@@ -29,6 +29,13 @@
             "when": 1742803767578,
             "tag": "0003_Removed type from users",
             "breakpoints": true
+        },
+        {
+            "idx": 4,
+            "version": "7",
+            "when": 1742804934473,
+            "tag": "0004_Add role plugins",
+            "breakpoints": true
         }
     ]
 }

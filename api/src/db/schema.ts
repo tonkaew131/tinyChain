@@ -16,6 +16,11 @@ export const users = pgTable('user', {
     image: text(),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().notNull(),
+
+    role: text(),
+    banned: boolean(),
+    banReason: text(),
+    banExpires: timestamp(),
 });
 
 export const sessions = pgTable('session', {
@@ -29,6 +34,7 @@ export const sessions = pgTable('session', {
     userId: text()
         .notNull()
         .references(() => users.id, { onDelete: 'cascade' }),
+    impersonatedBy: text(),
 });
 
 export const accounts = pgTable('account', {
