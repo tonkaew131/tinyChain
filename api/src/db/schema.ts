@@ -113,3 +113,35 @@ export const projectDevelopers = pgTable('project_developer', {
 
     createdAt: timestamp().defaultNow().notNull(),
 });
+
+// Carbon credit token metadata
+export const tokenMetadata = pgTable('token_metadata', {
+    tokenId: integer().primaryKey(),
+    projectId: text()
+        .notNull()
+        .references(() => projects.id, { onDelete: 'cascade' }),
+    year: text().notNull(),
+    startDate: timestamp().notNull(),
+    endDate: timestamp().notNull(),
+    developerAddress: text().notNull(),
+    carbonAmountTco2eq: integer().notNull(),
+    initialPriceThb: integer().notNull(), // Price in THB (satang)
+    initialPriceWei: text().notNull(), // Price in wei for smart contract
+    createdAt: timestamp().defaultNow().notNull(),
+    updatedAt: timestamp().defaultNow().notNull(),
+});
+
+// Market activity tracking
+export const marketActivity = pgTable('market_activity', {
+    id: text().primaryKey().default(sql`gen_random_uuid()`),
+    eventType: text().notNull(), // 'mint', 'list', 'sale', 'cancel'
+    tokenId: integer().notNull(),
+    amount: integer().notNull(),
+    sellerAddress: text().notNull(),
+    buyerAddress: text(),
+    pricePerUnitThb: integer(), // Price in THB (satang)
+    pricePerUnitWei: text(), // Price in wei for smart contract
+    transactionHash: text().notNull(),
+    blockTimestamp: timestamp().notNull(),
+    createdAt: timestamp().defaultNow().notNull(),
+});

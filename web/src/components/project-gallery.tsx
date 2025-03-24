@@ -3,9 +3,10 @@
 import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 interface ProjectGalleryProps {
-  images: string[]
+  images: readonly string[];
 }
 
 export function ProjectGallery({ images }: ProjectGalleryProps) {
@@ -22,10 +23,12 @@ export function ProjectGallery({ images }: ProjectGalleryProps) {
   return (
     <div className="relative rounded-lg overflow-hidden">
       <div className="aspect-video relative">
-        <img
+        <Image
           src={images[currentImage] || "/placeholder.svg"}
           alt={`Project image ${currentImage + 1}`}
-          className="object-cover w-full h-full"
+          fill
+          className="object-cover"
+          priority
         />
 
         {images.length > 1 && (
@@ -68,4 +71,3 @@ export function ProjectGallery({ images }: ProjectGalleryProps) {
     </div>
   )
 }
-

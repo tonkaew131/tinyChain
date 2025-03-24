@@ -1,56 +1,270 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ProjectPurchaseForm } from "@/components/project-purchase-form"
-import { ProjectGallery } from "@/components/project-gallery"
-import { ArrowLeft, Calendar, Globe, Leaf, MapPin, Shield } from "lucide-react"
+"use client"
 
-export default function ProjectPage({ params }: { params: { id: string } }) {
-  // This would be fetched from an API in a real application
-  const project = {
-    id: Number.parseInt(params.id),
-    title: "Regenerative Agriculture in Iowa",
-    description:
-      "This project implements no-till farming and cover crops to increase soil carbon sequestration on 5,000 acres of farmland in central Iowa. The practices not only reduce carbon emissions but also improve soil health, water quality, and biodiversity.",
-    location: "Iowa, USA",
-    carbonCredits: 5000,
-    price: 25,
-    images: [
-      "/projects/1.jpeg",
-      "/placeholder.svg?height=400&width=600",
-      "/placeholder.svg?height=400&width=600",
-    ],
-    type: "Agriculture",
-    certification: "Verra",
-    methodology: "VM0042: Methodology for Improved Agricultural Land Management",
-    startDate: "2022-03-15",
-    endDate: "2027-03-14",
-    farmer: {
-      name: "Johnson Family Farms",
-      since: 2010,
-      description: "A fifth-generation family farm committed to sustainable agriculture practices.",
-      image: "/placeholder.svg?height=100&width=100",
-    },
-    details: {
-      practices: [
-        "No-till farming to minimize soil disturbance",
-        "Cover crops to increase soil organic matter",
-        "Reduced fertilizer use through precision agriculture",
-        "Crop rotation to improve soil health",
-        "Buffer strips to prevent erosion and improve water quality",
-      ],
-      benefits: [
-        "Carbon sequestration in soil",
-        "Reduced greenhouse gas emissions",
-        "Improved soil health and water retention",
-        "Enhanced biodiversity",
-        "Reduced water pollution from agricultural runoff",
-      ],
-      verification: "Annual third-party verification by certified auditors to ensure compliance with Verra standards.",
-    },
-  }
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProjectGallery } from "@/components/project-gallery";
+import { ActivityItem } from "@/components/activity-item";
+import { ArrowLeft, Calendar, Globe, Leaf, MapPin, Shield } from "lucide-react";
+import { toast } from 'sonner';
+import { projects, tokens, activities, tokenPriceHistory } from '@/lib/mock-data';
+import { Input } from "@/components/ui/input";
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart, Legend, Line, LineChart } from 'recharts';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+
+interface TokenData {
+  id: number;
+  projectId: number;
+  year: string;
+  amount: number;
+  price: number;
+  priceWei: string;
+  available: boolean;
+}
+
+interface ActivityEvent {
+  id: string;
+  eventType: 'mint' | 'list' | 'sale' | 'cancel';
+  tokenId: number;
+  projectId: number;
+  amount: number;
+  sellerAddress: string;
+  buyerAddress?: string;
+  priceFormatted?: string;
+  transactionHash: string;
+  blockTimestamp: Date;
+}
+
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  carbonCredits: number;
+  price: number;
+  images: readonly string[];
+  type: string;
+  certification: string;
+  startDate: string;
+  endDate: string;
+}
+
+export default function ProjectPage() {
+  const { id } = useParams();
+  const [isConnected, setIsConnected] = useState(false);
+  const [project, setProject] = useState<Project | null>(null);
+  const [projectTokens, setProjectTokens] = useState<TokenData[]>([]);
+  const [recentActivity, setRecentActivity] = useState<ActivityEvent[]>([]);
+  const [buyAmount, setBuyAmount] = useState<number>(0);
+  const [selectedTokenId, setSelectedTokenId] = useState<number | 'all'>('all');
+  const [selectedBuyToken, setSelectedBuyToken] = useState<string>('');
+  const [combinedPriceData, setCombinedPriceData] = useState<{[key: string]: number}[]>([]);
+  const [isBuyDialogOpen, setIsBuyDialogOpen] = useState(false);
+  const [isSellDialogOpen, setIsSellDialogOpen] = useState(false);
+  const [sellPrice, setSellPrice] = useState<number>(0);
+  const [selectedTradeToken, setSelectedTradeToken] = useState<string>('');
+  const [userTokenBalances, setUserTokenBalances] = useState<{[key: number]: number}>({});
+
+  useEffect(() => {
+    // Find project from mock data
+    const projectId = Number(id);
+    const foundProject = projects.find(p => p.id === projectId);
+    if (foundProject) {
+      setProject({
+        ...foundProject,
+        images: [...foundProject.images]
+      });
+    }
+
+    // Filter tokens for this project
+    const projectTokens = tokens.filter(t => t.projectId === projectId);
+    setProjectTokens(projectTokens);
+
+    // Combine price history for all tokens
+    const tokenIds = projectTokens.map(t => t.id);
+    const dates = tokenPriceHistory[tokenIds[0]].map(d => d.date);
+    const combined = dates.map((date, i) => {
+      const dataPoint: {[key: string]: number} = { date: new Date(date).getTime() };
+      tokenIds.forEach(tokenId => {
+        dataPoint[`token${tokenId}`] = tokenPriceHistory[tokenId as keyof typeof tokenPriceHistory][i].price;
+      });
+      return dataPoint;
+    });
+    setCombinedPriceData(combined);
+
+    // Filter activities for this project
+    const projectActivities = activities
+      .filter(a => a.projectId === projectId)
+      .sort((a, b) => b.blockTimestamp.getTime() - a.blockTimestamp.getTime());
+    setRecentActivity(projectActivities);
+
+    // Simulate real-time updates
+    const interval = setInterval(() => {
+      const eventType = Math.random() > 0.5 ? 'list' as const : 'sale' as const;
+      const newActivity: ActivityEvent = {
+        id: Date.now().toString(),
+        eventType,
+        tokenId: projectTokens[0]?.id || 1,
+        projectId: projectId,
+        amount: Math.floor(Math.random() * 100) + 1,
+        sellerAddress: "0x1234...5678",
+        buyerAddress: eventType === 'sale' ? "0x9876...4321" : undefined,
+        priceFormatted: `${projectTokens[0]?.price.toFixed(2) || "25.00"} THB`,
+        transactionHash: "0x" + Math.random().toString(16).slice(2),
+        blockTimestamp: new Date()
+      };
+
+      setRecentActivity(prev => [newActivity, ...prev]);
+    }, 10000); // New activity every 10 seconds
+
+    // Mock user token balances
+    const mockBalances: {[key: number]: number} = {};
+    projectTokens.forEach(token => {
+      mockBalances[token.id] = Math.floor(Math.random() * 50); // Random balance between 0-50
+    });
+    setUserTokenBalances(mockBalances);
+
+    return () => clearInterval(interval);
+  }, [id]);
+
+  const connectWallet = async () => {
+    try {
+      if (typeof window.ethereum !== 'undefined') {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setIsConnected(true);
+        toast.success('Successfully connected to MetaMask');
+      } else {
+        toast.error('Please install MetaMask to use this feature');
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      toast.error('Failed to connect to MetaMask');
+    }
+  };
+
+  const handleBuy = async (tokenId: number, amount: number) => {
+    if (!isConnected) {
+      await connectWallet();
+      return;
+    }
+    toast.success(`Buying ${amount} tokens of ID ${tokenId}`);
+  };
+
+  const getTokenColor = (index: number) => {
+    const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444'];
+    return colors[index % colors.length];
+  };
+
+  const handleTabChange = (value: string) => {
+    setSelectedTokenId(value === 'all' ? 'all' : Number(value));
+  };
+
+  const renderTradingView = () => {
+    if (selectedTokenId === 'all') {
+      return (
+        <LineChart data={combinedPriceData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis 
+            dataKey="date"
+            type="number"
+            domain={['auto', 'auto']}
+            tickFormatter={(value) => new Date(value).toLocaleDateString()}
+            tick={{ fontSize: 12 }}
+          />
+          <YAxis 
+            domain={['auto', 'auto']}
+            tickFormatter={(value) => `${value} THB`}
+            tick={{ fontSize: 12 }}
+            width={80}
+          />
+          <Tooltip 
+            formatter={(value: number) => [`${value.toFixed(2)} THB`, 'Price']}
+            labelFormatter={(label) => new Date(label).toLocaleDateString()}
+            contentStyle={{ fontSize: '12px' }}
+          />
+          <Legend wrapperStyle={{ fontSize: '12px' }} />
+          {projectTokens.map((token, index) => (
+            <Line
+              key={token.id}
+              type="monotone"
+              dataKey={`token${token.id}`}
+              name={`Token ${token.id} (${token.year})`}
+              stroke={getTokenColor(index)}
+              dot={false}
+            />
+          ))}
+        </LineChart>
+      );
+    }
+
+    const tokenData = tokenPriceHistory[selectedTokenId as keyof typeof tokenPriceHistory];
+    return (
+      <AreaChart data={tokenData}>
+        <defs>
+          <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+            <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis 
+          dataKey="date" 
+          tickFormatter={(value) => value.slice(5)}
+          tick={{ fontSize: 12 }}
+        />
+        <YAxis 
+          domain={['auto', 'auto']}
+          tickFormatter={(value) => `${value} THB`}
+          tick={{ fontSize: 12 }}
+          width={80}
+        />
+        <Tooltip 
+          formatter={(value: number) => [`${value.toFixed(2)} THB`, 'Price']}
+          labelFormatter={(label) => `Date: ${label}`}
+          contentStyle={{ fontSize: '12px' }}
+        />
+        <Area 
+          type="monotone" 
+          dataKey="price" 
+          stroke="#22c55e" 
+          fillOpacity={1}
+          fill="url(#colorPrice)"
+        />
+      </AreaChart>
+    );
+  };
+
+  const handleTrade = (type: 'buy' | 'sell') => {
+    if (!isConnected) {
+      connectWallet();
+      return;
+    }
+
+    const tokenId = parseInt(selectedTradeToken);
+    
+    toast.success(
+      type === 'buy' 
+        ? `Buying ${buyAmount} tokens of ID ${tokenId}` 
+        : `Listed ${buyAmount} tokens of ID ${tokenId} for ${sellPrice} THB each`
+    );
+    
+    if (type === 'buy') {
+      setIsBuyDialogOpen(false);
+      setBuyAmount(0);
+    } else {
+      setIsSellDialogOpen(false);
+      setSellPrice(0);
+    }
+    setSelectedTradeToken('');
+  };
+
+  if (!project) return <div>Loading...</div>;
 
   return (
     <div className="container py-10 mx-auto">
@@ -77,10 +291,9 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold">${project.price}</span>
-              <span className="text-muted-foreground">per ton CO₂e</span>
-            </div>
+            <Button onClick={connectWallet} variant="outline">
+              {isConnected ? 'Connected' : 'Connect Wallet'}
+            </Button>
           </div>
         </div>
 
@@ -88,126 +301,282 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
           <div className="md:col-span-2">
             <ProjectGallery images={project.images} />
 
-            <Tabs defaultValue="overview" className="mt-8">
-              <TabsList>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="details">Project Details</TabsTrigger>
-                <TabsTrigger value="methodology">Methodology</TabsTrigger>
-                <TabsTrigger value="verification">Verification</TabsTrigger>
-              </TabsList>
-              <TabsContent value="overview" className="space-y-4">
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Project Description</h3>
-                  <p>{project.description}</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium flex items-center">
-                        <Leaf className="mr-2 h-4 w-4 text-primary" />
-                        Carbon Credits
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-2xl font-bold">{project.carbonCredits.toLocaleString()} tons</p>
-                      <p className="text-sm text-muted-foreground">Available for purchase</p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium flex items-center">
-                        <Globe className="mr-2 h-4 w-4 text-primary" />
-                        Location
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-2xl font-bold">{project.location}</p>
-                      <p className="text-sm text-muted-foreground">Project location</p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium flex items-center">
-                        <Calendar className="mr-2 h-4 w-4 text-primary" />
-                        Project Timeline
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-lg font-bold">
-                        {new Date(project.startDate).getFullYear()} - {new Date(project.endDate).getFullYear()}
-                      </p>
-                      <p className="text-sm text-muted-foreground">5 year duration</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-              <TabsContent value="details" className="space-y-4">
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Sustainable Practices</h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {project.details.practices.map((practice, index) => (
-                      <li key={index}>{practice}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Environmental Benefits</h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {project.details.benefits.map((benefit, index) => (
-                      <li key={index}>{benefit}</li>
-                    ))}
-                  </ul>
-                </div>
-              </TabsContent>
-              <TabsContent value="methodology">
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold">Methodology</h3>
-                  <p>{project.methodology}</p>
-                  <p>
-                    This methodology quantifies the greenhouse gas emission reductions and removals from the adoption of
-                    improved agricultural land management practices. The methodology applies to agricultural land
-                    management activities that reduce net greenhouse gas emissions by increasing carbon stocks in soils
-                    and woody biomass and/or decreasing emissions of carbon dioxide, methane, and nitrous oxide.
-                  </p>
-                  <p>Key elements of the methodology include:</p>
-                  <ul className="list-disc pl-5 space-y-1">
-                    <li>Baseline determination through historical land management practices</li>
-                    <li>Monitoring of implemented sustainable practices</li>
-                    <li>Calculation of carbon sequestration rates based on soil sampling</li>
-                    <li>Accounting for emissions from agricultural inputs and operations</li>
-                    <li>Consideration of leakage and permanence risks</li>
-                  </ul>
-                </div>
-              </TabsContent>
-              <TabsContent value="verification">
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold">Verification Process</h3>
-                  <p>{project.details.verification}</p>
-                  <p>The verification process includes:</p>
-                  <ul className="list-disc pl-5 space-y-1">
-                    <li>Annual site visits by independent auditors</li>
-                    <li>Soil sampling and analysis to measure carbon content</li>
-                    <li>Review of farm management records and practices</li>
-                    <li>Verification against the methodology requirements</li>
-                    <li>Issuance of verified carbon units after successful audit</li>
-                  </ul>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          <div>
-            <Card>
+            <Card className="mt-8">
               <CardHeader>
-                <CardTitle>Purchase Carbon Credits</CardTitle>
-                <CardDescription>Support this project by purchasing carbon credits</CardDescription>
+                <CardTitle>Project Overview</CardTitle>
+                <CardDescription>{project.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <ProjectPurchaseForm
-                  projectId={project.id}
-                  price={project.price}
-                  availableCredits={project.carbonCredits}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <h3 className="font-semibold flex items-center">
+                      <Leaf className="mr-2 h-4 w-4 text-primary" />
+                      Carbon Credits
+                    </h3>
+                    <p>{project.carbonCredits.toLocaleString()} tons</p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold flex items-center">
+                      <Globe className="mr-2 h-4 w-4 text-primary" />
+                      Location
+                    </h3>
+                    <p>{project.location}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold flex items-center">
+                      <Calendar className="mr-2 h-4 w-4 text-primary" />
+                      Project Timeline
+                    </h3>
+                    <p>{project.startDate} - {project.endDate}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-8">
+              <CardHeader>
+                <CardTitle>Trading View</CardTitle>
+                <CardDescription>Historical price and volume data</CardDescription>
+                <div className="mt-4">
+                  <Tabs defaultValue="all" onValueChange={handleTabChange}>
+                    <TabsList className="w-full">
+                      <TabsTrigger value="all" onClick={() => handleTabChange('all')}>
+                        All Tokens
+                      </TabsTrigger>
+                      {projectTokens.map((token) => (
+                        <TabsTrigger 
+                          key={token.id} 
+                          value={token.id.toString()}
+                          onClick={() => handleTabChange(token.id.toString())}
+                        >
+                          Token {token.id} ({token.year})
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  </Tabs>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[400px] mt-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    {renderTradingView()}
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4">
+                  {selectedTokenId !== 'all' && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-sm text-muted-foreground">24h Volume</p>
+                          <p className="text-lg font-medium">
+                            {tokenPriceHistory[selectedTokenId as keyof typeof tokenPriceHistory][30].volume.toLocaleString()} tokens
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Current Price</p>
+                          <p className="text-lg font-medium">
+                            {tokenPriceHistory[selectedTokenId as keyof typeof tokenPriceHistory][30].price.toFixed(2)} THB
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Your Balance</p>
+                          <p className="text-lg font-medium">
+                            {userTokenBalances[selectedTokenId as number] || 0} tokens
+                          </p>
+                        </div>
+                      </div>
+                     
+                    </div>
+                  )}
+         
+                </div>
+                <div className="flex gap-4 mt-8">
+                  <Dialog open={isBuyDialogOpen} onOpenChange={setIsBuyDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="flex-1 h-20 font-bold text-2xl">Buy</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Buy Carbon Credits</DialogTitle>
+                        <DialogDescription>
+                          Purchase carbon credits directly from the marketplace.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label>Select Token</Label>
+                          <Select value={selectedTradeToken} onValueChange={setSelectedTradeToken}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a token" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {projectTokens.map((token) => (
+                                <SelectItem key={token.id} value={token.id.toString()}>
+                                  Token {token.id} ({token.year}) - {token.price.toLocaleString()} THB
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {selectedTradeToken && (
+                          <div className="space-y-2">
+                            <Label>Amount to Buy</Label>
+                            <Input
+                              type="number"
+                              placeholder="Amount"
+                              min={1}
+                              step={1}
+                              max={projectTokens.find(t => t.id.toString() === selectedTradeToken)?.amount || 0}
+                              onChange={(e) => setBuyAmount(parseInt(e.target.value) || 0)}
+                            />
+                            <p className="text-sm text-muted-foreground">
+                              Available: {projectTokens.find(t => t.id.toString() === selectedTradeToken)?.amount || 0} tokens
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsBuyDialogOpen(false)}>Cancel</Button>
+                        <Button 
+                          onClick={() => handleTrade('buy')}
+                          disabled={!selectedTradeToken || !buyAmount || !isConnected}
+                        >
+                          {isConnected ? 'Buy Now' : 'Connect Wallet to Buy'}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Dialog open={isSellDialogOpen} onOpenChange={setIsSellDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="flex-1 h-20 font-bold text-xl" variant="outline">Sell</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Sell Carbon Credits</DialogTitle>
+                        <DialogDescription>
+                          List your carbon credits on the marketplace.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label>Select Token</Label>
+                          <Select value={selectedTradeToken} onValueChange={setSelectedTradeToken}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a token" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {projectTokens.map((token) => (
+                                <SelectItem 
+                                  key={token.id} 
+                                  value={token.id.toString()}
+                                  disabled={!userTokenBalances[token.id]}
+                                >
+                                  Token {token.id} ({token.year}) - Balance: {userTokenBalances[token.id] || 0}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {selectedTradeToken && (
+                          <>
+                            <div className="space-y-2">
+                              <Label>Amount to Sell</Label>
+                              <Input
+                                type="number"
+                                placeholder="Amount"
+                                min={1}
+                                step={1}
+                                max={userTokenBalances[parseInt(selectedTradeToken)] || 0}
+                                onChange={(e) => setBuyAmount(parseInt(e.target.value) || 0)}
+                              />
+                              <p className="text-sm text-muted-foreground">
+                                Your Balance: {userTokenBalances[parseInt(selectedTradeToken)] || 0} tokens
+                              </p>
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Price per Token (THB)</Label>
+                              <Input
+                                type="number"
+                                placeholder="Price"
+                                min={0}
+                                step={0.01}
+                                onChange={(e) => setSellPrice(parseFloat(e.target.value) || 0)}
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsSellDialogOpen(false)}>Cancel</Button>
+                        <Button 
+                          onClick={() => handleTrade('sell')}
+                          disabled={!selectedTradeToken || !buyAmount || !sellPrice || !isConnected}
+                        >
+                          {isConnected ? 'List for Sale' : 'Connect Wallet to Sell'}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                  </div>
+              </CardContent>
+            </Card>
+
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
+              <div className="space-y-4">
+                {recentActivity.slice(0, 5).map((event) => (
+                  <ActivityItem key={event.id} event={event} />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Buy Carbon Credits</CardTitle>
+                <CardDescription>Purchase directly from the developer</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <Select value={selectedBuyToken} onValueChange={setSelectedBuyToken}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a token" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projectTokens.map((token) => (
+                        <SelectItem key={token.id} value={token.id.toString()}>
+                          Token {token.id} ({token.year}) - {token.price.toLocaleString()} THB
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {selectedBuyToken && (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">Available {projectTokens.find(t => t.id.toString() === selectedBuyToken)?.amount || 0} tokens</p>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          placeholder="Amount to buy"
+                          min={1}
+                          max={projectTokens.find(t => t.id.toString() === selectedBuyToken)?.amount || 0}
+                          onChange={(e) => setBuyAmount(parseInt(e.target.value) || 0)}
+                          className="w-full"
+                          step={1}
+                        />
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        onClick={() => handleBuy(parseInt(selectedBuyToken), buyAmount)}
+                        disabled={!buyAmount || buyAmount > (projectTokens.find(t => t.id.toString() === selectedBuyToken)?.amount || 0) || !isConnected}
+                      >
+                        {isConnected ? 'Buy Now' : 'Connect Wallet to Buy'}
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
@@ -218,25 +587,49 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-4">
                   <img
-                    src={project.farmer.image || "/placeholder.svg"}
-                    alt={project.farmer.name}
+                    src={'' || "/placeholder.svg"}
+                    alt={''}
                     className="h-16 w-16 rounded-full object-cover"
                   />
                   <div>
-                    <h3 className="font-semibold">{project.farmer.name}</h3>
-                    <p className="text-sm text-muted-foreground">Member since {project.farmer.since}</p>
+                    <h3 className="font-semibold">{'Jonh Doe'}</h3>
+                    <p className="text-sm text-muted-foreground">Member since {'2023-01-01'}</p>
                   </div>
                 </div>
-                <p className="text-sm">{project.farmer.description}</p>
+                <p className="text-sm">{'John Doe is a farmer with 10 years of experience in agriculture.'}</p>
                 <Button variant="outline" className="w-full">
                   Contact Developer
                 </Button>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Token Details</CardTitle>
+                  </div>
+                  <CardDescription>Detailed information about available tokens</CardDescription>
+                </CardHeader>
+                <CardContent>
+                      <div className="">
+                        {projectTokens.map((token, index) => (
+                         
+                         <div key={token.id} tabIndex={index} className={`collapse collapse-plus`}>
+                          <div className="collapse-title font-semibold">Token ID {token.id}</div>
+                                <div className="collapse-content text-sm" >
+                                  <p className="text-sm text-muted-foreground">Year: {token.year}</p>
+                                  <p className="text-sm">Available: {token.amount} tokens</p>
+                                  <p className="text-sm font-medium">Price: {token.price.toLocaleString()} THB</p>
+                                </div>
+                              </div>
+                        ))}
+                      </div>
+                  </CardContent>
+                </Card>
+
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
