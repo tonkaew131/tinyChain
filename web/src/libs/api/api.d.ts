@@ -4,16 +4,16 @@
  */
 
 export interface paths {
-    "/contracts/hello-world/": {
+    "/project/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getContractsHello-world"];
+        get: operations["getProject"];
         put?: never;
-        post: operations["postContractsHello-world"];
+        post: operations["postProject"];
         delete?: never;
         options?: never;
         head?: never;
@@ -48,7 +48,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    "getContractsHello-world": {
+    getProject: {
         parameters: {
             query?: never;
             header?: never;
@@ -61,21 +61,11 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        message: string;
-                    };
-                    "multipart/form-data": {
-                        message: string;
-                    };
-                    "text/plain": {
-                        message: string;
-                    };
-                };
+                content?: never;
             };
         };
     };
-    "postContractsHello-world": {
+    postProject: {
         parameters: {
             query?: never;
             header?: never;
@@ -85,13 +75,19 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    message: string;
+                    developerId: string;
+                    name: string;
+                    description?: string;
                 };
                 "multipart/form-data": {
-                    message: string;
+                    developerId: string;
+                    name: string;
+                    description?: string;
                 };
                 "text/plain": {
-                    message: string;
+                    developerId: string;
+                    name: string;
+                    description?: string;
                 };
             };
         };
@@ -100,17 +96,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": {
-                        message: string;
-                    };
-                    "multipart/form-data": {
-                        message: string;
-                    };
-                    "text/plain": {
-                        message: string;
-                    };
-                };
+                content?: never;
             };
         };
     };
