@@ -57,6 +57,13 @@
             "when": 1742810437724,
             "tag": "0007_Add project developer seq",
             "breakpoints": true
+        },
+        {
+            "idx": 8,
+            "version": "7",
+            "when": 1743088865089,
+            "tag": "0008_Add id to project token",
+            "breakpoints": true
         }
     ]
 }

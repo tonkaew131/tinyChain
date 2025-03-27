@@ -9,7 +9,7 @@
   "scripts": {
     "format": "bun --filter '*' format",
     "dev": "dotenv -- bun --filter '*' --elide-lines=0 dev",
-    "db:migrate": "dotenv -- bun --filter 'api' db:migrate",
+    "db:migrate": "dotenv -- bun --filter 'api' --elide-lines=0 db:migrate",
     "db:studio": "dotenv -- bun --filter 'api' db:studio",
     "db:seed": "dotenv -- bun --filter 'api' --elide-lines=0 db:seed",
     "hh:compile": "dotenv -- bun --filter 'contracts' hh:compile",

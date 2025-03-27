@@ -1,6 +1,7 @@
 import { Elysia } from 'elysia';
 
 import { AuthRoute } from './routes/auth';
+import { DeveloperRoute } from './routes/developer';
 import { HelloWorldRoute } from './routes/hello-world';
 import { ProjectRoute } from './routes/project';
 import { auth } from './utils/auth';
@@ -44,6 +45,7 @@ const app = new Elysia()
     })
     .use(AuthRoute)
     .use(ProjectRoute)
+    .use(DeveloperRoute)
     .use(HelloWorldRoute)
     .get('/', () => 'Hello Elysia')
     .listen(3001);

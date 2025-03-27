@@ -37,7 +37,8 @@ export function LoginForm() {
     login.mutate(
       { email: data.email, password: data.password },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          console.log(data);
           toast.success("Successfully logged in!")
           router.push("/projects")
         },

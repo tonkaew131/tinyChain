@@ -1,56 +1,28 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useLogin } from "@/lib/auth-client"
-import { useState } from "react"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { LoginForm } from "@/components/auth/login-form"
+
+export const metadata: Metadata = {
+  title: "Login | AkaraCarbon",
+  description: "Login to your AkaraCarbon account to manage your carbon credits.",
+}
 
 export default function LoginPage() {
-
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const login = useLogin();
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        login.mutate({ email, password },{
-            onSuccess: (data) => {
-                console.log(data);
-                alert("Login Success");
-            },
-            onError: (error) => {
-                alert(error.message);
-            }
-        }
-);
-    };
-    return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-4xl font-bold">Login</h1>
-            <form className="flex flex-col space-y-4 w-full max-w-sm" onSubmit={handleSubmit}>
-                <label htmlFor="email" className="text-sm font-medium">
-                    Email
-                </label>
-                <Input
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="input"
-                    placeholder="Email"
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <label htmlFor="password" className="text-sm font-medium">
-                    Password
-                </label>
-                <Input
-                    type="password"
-                    id="password"
-                    name="password"
-                    className="input"
-                    placeholder="Password"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <Button type="submit" size="sm" >Login</Button>
-            </form>
+  return (
+    <div className="flex h-screen w-full flex-col items-center justify-center">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+        <div className="flex flex-col space-y-2 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+          <p className="text-sm text-muted-foreground">Login to your account</p>
         </div>
-    );
+        <LoginForm />
+        <p className="px-8 text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="hover:text-brand underline underline-offset-4">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </div>
+  )
 }

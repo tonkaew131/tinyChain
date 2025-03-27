@@ -10,3 +10,9 @@ export const useLogin = () => {
         mutationFn: (data: { email: string, password: string }) => authClient.signIn.email(data),
     })
 }
+export const useSignup = () => {
+    return useMutation({
+        mutationFn: (data: { name: string; email: string; password: string; role: string }) => authClient.signUp.email(data),
+    })
+}
+

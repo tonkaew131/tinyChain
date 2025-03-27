@@ -6,6 +6,13 @@ import { db } from '@api/db';
 import * as schema from '@api/db/schema';
 
 export const auth = betterAuth({
+    advanced: {
+        cookies: {
+            session_token: {
+                attributes: {},
+            },
+        },
+    },
     database: drizzleAdapter(db, {
         provider: 'pg',
         schema: {

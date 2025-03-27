@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useSignup } from "@/lib/auth-client"
 
 const formSchema = z
   .object({
@@ -39,6 +40,7 @@ export function SignupForm() {
   const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
+  const signUp = useSignup()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,43 +54,66 @@ export function SignupForm() {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    signUp.mutate(
+        { 
+            name: data.name, 
+            email: data.email, 
+            password: data.password, 
+            role: data.role 
+        },
+        {
+            onSuccess: (data) => {
+                console.log(data)
+                toast.success("Successfully signed up!");
+                router.push("/projects");
+            },
+            onError: (error) => { 
+                toast.error(error?.message || "An error occurred during signup");
+            },
+        }
+    );
+};
 
-    try {
-    //   const response = await fetch('/api/auth/register', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       name: values.name,
-    //       email: values.email,
-    //       password: values.password,
-    //       role: values.role,
-    //     }),
-    //   })
 
-    //   const data = await response.json()
 
-    //   if (!response.ok) {
-    //     throw new Error(data.error || 'Registration failed')
-    //   }
+  // async function onSubmit(values: z.infer<typeof formSchema>) {
+  //   setIsLoading(true)
 
-      toast.success("Account created", {
-        description: "Your account has been created successfully. You can now log in.",
-      })
+  //   try {
+  //   //   const response = await fetch('/api/auth/register', {
+  //   //     method: 'POST',
+  //   //     headers: {
+  //   //       'Content-Type': 'application/json',
+  //   //     },
+  //   //     body: JSON.stringify({
+  //   //       name: values.name,
+  //   //       email: values.email,
+  //   //       password: values.password,
+  //   //       role: values.role,
+  //   //     }),
+  //   //   })
 
-      // Redirect to login page
-      router.push("/login")
-    } catch (error) {
-      toast.error("Registration failed", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  //   //   const data = await response.json()
+
+  //   //   if (!response.ok) {
+  //   //     throw new Error(data.error || 'Registration failed')
+  //   //   }
+
+  //     toast.success("Account created", {
+  //       description: "Your account has been created successfully. You can now log in.",
+  //     })
+
+  //     // Redirect to login page
+  //     router.push("/login")
+  //   } catch (error) {
+  //     toast.error("Registration failed", {
+  //       description: error instanceof Error ? error.message : "An unexpected error occurred",
+  //     })
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   return (
     <Card>

@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import {
     boolean,
+    decimal,
     integer,
     pgEnum,
     pgSequence,
@@ -87,14 +88,16 @@ export const projects = pgTable('project', {
 });
 
 export const projectTokens = pgTable('project_token', {
-    tokenId: integer().primaryKey(),
+    id: text().primaryKey(),
+    tokenId: integer().unique(),
     projectId: text()
         .notNull()
         .references(() => projects.id, { onDelete: 'cascade' }),
 
     name: text().notNull(),
+    amount: decimal().notNull(),
     startDate: timestamp().notNull(),
-    endDate: timestamp(),
+    endDate: timestamp().notNull(),
 
     createdAt: timestamp().defaultNow().notNull(),
 });

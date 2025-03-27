@@ -7,20 +7,32 @@ import {ERC1155Supply} from '@openzeppelin/contracts/token/ERC1155/extensions/ER
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 
 contract AkaraCarbon is ERC1155, Ownable, ERC1155Supply {
+    uint256 private currentTokenId = 0;
+    address public ownerAddress;
     constructor(
         address initialOwner
     )
         ERC1155('https://akaracarbon.athichal.com/api/token/{id}.json')
         Ownable(initialOwner)
-    {}
+    {
+        ownerAddress = initialOwner;
+    }
+
+    struct Token {
+        uint256 expiry;
+    }
+    mapping(uint256 => Token) public tokens;
 
     function mint(
-        address account,
-        uint256 id,
         uint256 amount,
-        bytes memory data
-    ) public onlyOwner {
-        _mint(account, id, amount, data);
+        bytes memory data,
+        uint256 expiryTimestamp
+    ) public onlyOwner returns (uint256) {
+        require(expiryTimestamp > block.timestamp, 'AkaraCarbon: EXPIRY_PAST');
+        uint256 tokenId = currentTokenId++;
+        tokens[tokenId] = Token(expiryTimestamp);
+        _mint(ownerAddress, tokenId, amount, data);
+        return tokenId;
     }
 
     function mintBatch(
@@ -31,8 +43,17 @@ contract AkaraCarbon is ERC1155, Ownable, ERC1155Supply {
     ) public onlyOwner {
         _mintBatch(to, ids, amounts, data);
     }
+    function isExpired(uint256 tokenId) public view returns (bool) {
+        return tokens[tokenId].expiry < block.timestamp;
+    }
 
-    // The following functions are overrides required by Solidity.
+    function destoryExpired(uint256 tokenId) public {
+        require(isExpired(tokenId), 'AkaraCarbon: NOT_EXPIRED');
+        uint256 balance = balanceOf(msg.sender, tokenId);
+        require(balance > 0, 'AkaraCarbon: NO_BALANCE');
+        _burn(msg.sender, tokenId, balance);
+        delete tokens[tokenId];
+    }
 
     function _update(
         address from,
