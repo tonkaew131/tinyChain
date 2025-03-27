@@ -13,7 +13,8 @@ export default function LoginPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         login.mutate({ email, password },{
-            onSuccess: () => {
+            onSuccess: (data) => {
+                console.log(data);
                 alert("Login Success");
             },
             onError: (error) => {

@@ -2,7 +2,7 @@ import { createAuthClient } from "better-auth/react"
 import { useMutation } from "@tanstack/react-query";
 
 export const authClient = createAuthClient({
-    baseURL: "http://localhost:3000"
+    baseURL: "http://localhost:3001/auth"
 })
 
 export const useLogin = () => {
