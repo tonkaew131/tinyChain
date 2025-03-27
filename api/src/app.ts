@@ -12,7 +12,7 @@ const app = new Elysia()
         swagger({
             scalarConfig: {
                 spec: {
-                    url: '/swagger/all-json',
+                    url: '/api/swagger/all-json',
                 },
                 servers: [
                     {
