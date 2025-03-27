@@ -1,6 +1,11 @@
+'use client';
+
+import Image from 'next/image';
 import Link from 'next/link';
 
-import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import { LoaderCircle, Search } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,82 +19,150 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
+import { fetchProject, fetchProjectThumbnail } from '@/action/project';
+
+interface Project {
+    id: string;
+    name: string;
+    developerId: string;
+    description: string;
+    location: string;
+    image: string;
+    certification: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export function ProjectGrid() {
     // This would be fetched from an API in a real application
-    const projects = [
-        {
-            id: 1,
-            title: 'Regenerative Agriculture in Iowa',
-            description:
-                'No-till farming and cover crops to increase soil carbon sequestration',
-            location: 'Iowa, USA',
-            carbonCredits: 5000,
-            price: 25,
-            image: '/projects/1.jpeg',
-            type: 'Agriculture',
-            certification: 'Verra',
-        },
-        {
-            id: 2,
-            title: 'Agroforestry Project',
-            description:
-                'Integrating trees with crops to enhance biodiversity and carbon capture',
-            location: 'California, USA',
-            carbonCredits: 3500,
-            price: 30,
-            image: '/projects/2.png',
-            type: 'Forestry',
-            certification: 'Gold Standard',
-        },
-        {
-            id: 3,
-            title: 'Methane Capture from Dairy',
-            description:
-                'Capturing and converting methane from dairy operations into renewable energy',
-            location: 'Wisconsin, USA',
-            carbonCredits: 7500,
-            price: 22,
-            image: '/projects/3.jpg',
-            type: 'Livestock',
-            certification: 'American Carbon Registry',
-        },
-        {
-            id: 4,
-            title: 'Sustainable Rice Cultivation',
-            description:
-                'Implementing water management techniques to reduce methane emissions from rice paddies',
-            location: 'Arkansas, USA',
-            carbonCredits: 2800,
-            price: 28,
-            image: '/projects/4.png',
-            type: 'Agriculture',
-            certification: 'Verra',
-        },
-        {
-            id: 5,
-            title: 'Grassland Conservation',
-            description:
-                'Preserving native grasslands to prevent carbon release from soil disturbance',
-            location: 'Montana, USA',
-            carbonCredits: 6200,
-            price: 20,
-            image: '/projects/5.jpg',
-            type: 'Conservation',
-            certification: 'Climate Action Reserve',
-        },
-        {
-            id: 6,
-            title: 'Organic Farming Transition',
-            description:
-                'Supporting farmers transitioning to organic practices that enhance soil carbon',
-            location: 'Oregon, USA',
-            carbonCredits: 1800,
-            price: 35,
-            image: '/projects/6.jpg',
-            type: 'Agriculture',
-            certification: 'Gold Standard',
-        },
-    ];
+    // const projects = [
+    //     {
+    //         id: 1,
+    //         title: 'Regenerative Agriculture in Iowa',
+    //         description:
+    //             'No-till farming and cover crops to increase soil carbon sequestration',
+    //         location: 'Iowa, USA',
+    //         carbonCredits: 5000,
+    //         price: 25,
+    //         image: '/projects/1.jpeg',
+    //         type: 'Agriculture',
+    //         certification: 'Verra',
+    //     },
+    //     {
+    //         id: 2,
+    //         title: 'Agroforestry Project',
+    //         description:
+    //             'Integrating trees with crops to enhance biodiversity and carbon capture',
+    //         location: 'California, USA',
+    //         carbonCredits: 3500,
+    //         price: 30,
+    //         image: '/projects/2.png',
+    //         type: 'Forestry',
+    //         certification: 'Gold Standard',
+    //     },
+    //     {
+    //         id: 3,
+    //         title: 'Methane Capture from Dairy',
+    //         description:
+    //             'Capturing and converting methane from dairy operations into renewable energy',
+    //         location: 'Wisconsin, USA',
+    //         carbonCredits: 7500,
+    //         price: 22,
+    //         image: '/projects/3.jpg',
+    //         type: 'Livestock',
+    //         certification: 'American Carbon Registry',
+    //     },
+    //     {
+    //         id: 4,
+    //         title: 'Sustainable Rice Cultivation',
+    //         description:
+    //             'Implementing water management techniques to reduce methane emissions from rice paddies',
+    //         location: 'Arkansas, USA',
+    //         carbonCredits: 2800,
+    //         price: 28,
+    //         image: '/projects/4.png',
+    //         type: 'Agriculture',
+    //         certification: 'Verra',
+    //     },
+    //     {
+    //         id: 5,
+    //         title: 'Grassland Conservation',
+    //         description:
+    //             'Preserving native grasslands to prevent carbon release from soil disturbance',
+    //         location: 'Montana, USA',
+    //         carbonCredits: 6200,
+    //         price: 20,
+    //         image: '/projects/5.jpg',
+    //         type: 'Conservation',
+    //         certification: 'Climate Action Reserve',
+    //     },
+    //     {
+    //         id: 6,
+    //         title: 'Organic Farming Transition',
+    //         description:
+    //             'Supporting farmers transitioning to organic practices that enhance soil carbon',
+    //         location: 'Oregon, USA',
+    //         carbonCredits: 1800,
+    //         price: 35,
+    //         image: '/projects/6.jpg',
+    //         type: 'Agriculture',
+    //         certification: 'Gold Standard',
+    //     },
+    // ];
+
+    const [projectData, setProjectData] = useState<Project[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+
+    useEffect(() => {
+        const loadProjects = async () => {
+            try {
+                setIsLoading(true);
+                const projectResponse = await fetchProject();
+                const projectsWithThumbnails = await Promise.all(
+                    projectResponse.data.map(async (project: Project) => {
+                        try {
+                            const thumbnailData = await fetchProjectThumbnail(
+                                project.id
+                            );
+                            console.log(
+                                `Thumbnail for project ${project.id}:`,
+                                thumbnailData
+                            );
+
+                            return {
+                                ...project,
+                                image: thumbnailData.data,
+                            };
+                        } catch (thumbnailError) {
+                            console.error(
+                                `Failed to fetch thumbnail for project ${project.id}`,
+                                thumbnailError
+                            );
+                            return project;
+                        }
+                    })
+                );
+
+                setProjectData(projectsWithThumbnails);
+                setIsLoading(false);
+            } catch (err) {
+                setError(
+                    err instanceof Error
+                        ? err
+                        : new Error('An unknown error occurred')
+                );
+                setIsLoading(false);
+            }
+        };
+
+        loadProjects();
+    }, []);
+
+    if (isLoading) {
+        return <LoaderCircle className="w-full animate-spin" />;
+    }
+    console.log(projectData);
 
     return (
         <div className="space-y-6">
@@ -98,24 +171,26 @@ export function ProjectGrid() {
                 <Input placeholder="Search projects..." className="pl-8" />
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {projects.map((project) => (
+                {projectData.map((project) => (
                     <Card
                         key={project.id}
                         className="flex flex-col overflow-hidden"
                     >
                         <div className="relative h-48 w-full overflow-hidden">
-                            <img
+                            <Image
                                 src={project.image || '/placeholder.svg'}
-                                alt={project.title}
+                                alt={project.name}
+                                width={200}
+                                height={200}
                                 className="h-full w-full object-cover transition-transform hover:scale-105"
                             />
                         </div>
                         <CardHeader className="flex-1">
                             <div className="flex items-start justify-between">
                                 <CardTitle className="line-clamp-1">
-                                    {project.title}
+                                    {project.name}
                                 </CardTitle>
-                                <Badge>{project.type}</Badge>
+                                <Badge>AKCO2</Badge>
                             </div>
                             <CardDescription className="line-clamp-2">
                                 {project.description}
@@ -136,8 +211,7 @@ export function ProjectGrid() {
                                         Credits Available
                                     </span>
                                     <span className="font-medium">
-                                        {project.carbonCredits.toLocaleString()}{' '}
-                                        tCO
+                                        0 tCO
                                         <span className="text-[.5rem]">2</span>e
                                     </span>
                                 </div>
@@ -146,7 +220,7 @@ export function ProjectGrid() {
                                         Price per Credit
                                     </span>
                                     <span className="font-medium">
-                                        ${project.price}/ton
+                                        $123/ton
                                     </span>
                                 </div>
                                 <div className="flex flex-col">
@@ -154,7 +228,7 @@ export function ProjectGrid() {
                                         Certification
                                     </span>
                                     <span className="font-medium">
-                                        {project.certification}
+                                        AKCO2 Certified
                                     </span>
                                 </div>
                             </div>

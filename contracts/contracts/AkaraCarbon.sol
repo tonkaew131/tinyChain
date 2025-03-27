@@ -23,15 +23,21 @@ contract AkaraCarbon is ERC1155, Ownable, ERC1155Supply {
     }
     mapping(uint256 => Token) public tokens;
 
+    event TokenMinted(uint256 tokenId);
+
     function mint(
         uint256 amount,
         bytes memory data,
         uint256 expiryTimestamp
     ) public onlyOwner returns (uint256) {
         require(expiryTimestamp > block.timestamp, 'AkaraCarbon: EXPIRY_PAST');
+
         uint256 tokenId = currentTokenId++;
+
         tokens[tokenId] = Token(expiryTimestamp);
         _mint(ownerAddress, tokenId, amount, data);
+
+        emit TokenMinted(tokenId);
         return tokenId;
     }
 

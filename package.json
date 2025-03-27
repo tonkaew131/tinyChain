@@ -13,7 +13,7 @@
     "db:studio": "dotenv -- bun --filter 'api' db:studio",
     "db:seed": "dotenv -- bun --filter 'api' --elide-lines=0 db:seed",
     "hh:compile": "dotenv -- bun --filter 'contracts' hh:compile",
-    "hh:deploy": "dotenv -- bun --filter 'contracts' hh:deploy",
+    "hh:deploy": "dotenv -- bun --filter 'contracts' --elide-lines=0 hh:deploy",
     "hh:interact": "dotenv -- bun --filter 'contracts' hh:interact"
   },
   "devDependencies": {

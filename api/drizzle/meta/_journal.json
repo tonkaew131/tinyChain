@@ -71,6 +71,34 @@
             "when": 1743091509339,
             "tag": "0009_Add user tokens",
             "breakpoints": true
+        },
+        {
+            "idx": 10,
+            "version": "7",
+            "when": 1743099190031,
+            "tag": "0010_Add unsold amount",
+            "breakpoints": true
+        },
+        {
+            "idx": 11,
+            "version": "7",
+            "when": 1743099955208,
+            "tag": "0011_Add wallet to user",
+            "breakpoints": true
+        },
+        {
+            "idx": 12,
+            "version": "7",
+            "when": 1743101157962,
+            "tag": "0012_Add location to project",
+            "breakpoints": true
+        },
+        {
+            "idx": 13,
+            "version": "7",
+            "when": 1743102320163,
+            "tag": "0013_Add amount to user tokens",
+            "breakpoints": true
         }
     ]
 }

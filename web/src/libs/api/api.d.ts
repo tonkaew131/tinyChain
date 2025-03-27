@@ -36,6 +36,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    '/project/{id}': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations['getProjectById'];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     '/project/{id}/thumbnail': {
         parameters: {
             query?: never;
@@ -69,6 +85,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    '/project/{id}/token/{tokenId}/buy': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations['postProjectByIdTokenByTokenIdBuy'];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     '/developer/': {
         parameters: {
             query?: never;
@@ -77,6 +109,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations['getDeveloper'];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    '/developer/stats': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations['getDeveloperStats'];
         put?: never;
         post?: never;
         delete?: never;
@@ -150,6 +198,7 @@ export interface operations {
                         data: {
                             id: string;
                             developerId: string;
+                            location: string;
                             name: string;
                             description: string;
                             createdAt: Record<string, never>;
@@ -162,6 +211,7 @@ export interface operations {
                         data: {
                             id: string;
                             developerId: string;
+                            location: string;
                             name: string;
                             description: string;
                             createdAt: Record<string, never>;
@@ -174,6 +224,7 @@ export interface operations {
                         data: {
                             id: string;
                             developerId: string;
+                            location: string;
                             name: string;
                             description: string;
                             createdAt: Record<string, never>;
@@ -194,6 +245,7 @@ export interface operations {
         requestBody: {
             content: {
                 'application/json': {
+                    location: string;
                     name: string;
                     description?: string;
                     /**
@@ -203,6 +255,7 @@ export interface operations {
                     thumbnail: string;
                 };
                 'multipart/form-data': {
+                    location: string;
                     name: string;
                     description?: string;
                     /**
@@ -212,6 +265,7 @@ export interface operations {
                     thumbnail: string;
                 };
                 'text/plain': {
+                    location: string;
                     name: string;
                     description?: string;
                     /**
@@ -228,6 +282,65 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    getProjectById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            developerId: string;
+                            location: string;
+                            name: string;
+                            description: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never>;
+                        };
+                    };
+                    'multipart/form-data': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            developerId: string;
+                            location: string;
+                            name: string;
+                            description: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never>;
+                        };
+                    };
+                    'text/plain': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            developerId: string;
+                            location: string;
+                            name: string;
+                            description: string;
+                            createdAt: Record<string, never>;
+                            updatedAt: Record<string, never>;
+                        };
+                    };
+                };
             };
         };
     };
@@ -264,20 +377,23 @@ export interface operations {
                 'application/json': {
                     name: string;
                     amount: string;
-                    startDate: Record<string, never>;
-                    endDate: Record<string, never>;
+                    pricePerToken?: string;
+                    startDate: string;
+                    endDate: string;
                 };
                 'multipart/form-data': {
                     name: string;
                     amount: string;
-                    startDate: Record<string, never>;
-                    endDate: Record<string, never>;
+                    pricePerToken?: string;
+                    startDate: string;
+                    endDate: string;
                 };
                 'text/plain': {
                     name: string;
                     amount: string;
-                    startDate: Record<string, never>;
-                    endDate: Record<string, never>;
+                    pricePerToken?: string;
+                    startDate: string;
+                    endDate: string;
                 };
             };
         };
@@ -287,6 +403,60 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    postProjectByIdTokenByTokenIdBuy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                tokenId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                'application/json': {
+                    amount: number;
+                };
+                'multipart/form-data': {
+                    amount: number;
+                };
+                'text/plain': {
+                    amount: number;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            transactionHash: string;
+                        };
+                    };
+                    'multipart/form-data': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            transactionHash: string;
+                        };
+                    };
+                    'text/plain': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            transactionHash: string;
+                        };
+                    };
+                };
             };
         };
     };
@@ -304,6 +474,54 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    getDeveloperStats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            totalCarbonOffset: number;
+                            activeCredits: number;
+                            retiredCredits: number;
+                            totalProjects: number;
+                        };
+                    };
+                    'multipart/form-data': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            totalCarbonOffset: number;
+                            activeCredits: number;
+                            retiredCredits: number;
+                            totalProjects: number;
+                        };
+                    };
+                    'text/plain': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            totalCarbonOffset: number;
+                            activeCredits: number;
+                            retiredCredits: number;
+                            totalProjects: number;
+                        };
+                    };
+                };
             };
         };
     };

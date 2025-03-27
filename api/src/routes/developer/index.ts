@@ -1,6 +1,6 @@
 import Elysia, { error, t } from 'elysia';
 
-import { eq } from 'drizzle-orm';
+import { eq, sum } from 'drizzle-orm';
 
 import { db } from '@api/db';
 import * as schema from '@api/db/schema';
@@ -29,14 +29,22 @@ export const DeveloperRoute = new Elysia({
             }
 
             const [stats] = await db
-                .select()
+                .select({
+                    totalCarbonOffset: sum(schema.projectTokens.amount),
+                })
                 .from(schema.userTokens)
+                .leftJoin(
+                    schema.projectTokens,
+                    eq(schema.projectTokens.tokenId, schema.userTokens.tokenId)
+                )
                 .where(eq(schema.userTokens.userId, session.user.id));
 
             return {
                 status: 'ok' as const,
                 data: {
-                    totalCarbonOffset: 0,
+                    totalCarbonOffset: parseFloat(
+                        stats.totalCarbonOffset ?? '0'
+                    ),
                     activeCredits: 0,
                     retiredCredits: 0,
                     totalProjects: 0,

@@ -3,7 +3,7 @@ import Elysia, { error, t } from 'elysia';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-typebox';
 
 import { akaraCarbonContract } from '@api/contracts/AkaraCarbon';
@@ -104,6 +104,30 @@ export const ProjectRoute = new Elysia({
             }),
         }
     )
+    .get(
+        '/:id',
+        async (context) => {
+            const [project] = await db
+                .select()
+                .from(schema.projects)
+                .where(eq(schema.projects.id, context.params.id));
+
+            if (!project) {
+                throw new Error('Not found');
+            }
+
+            return {
+                status: 'ok' as const,
+                data: project,
+            };
+        },
+        {
+            response: t.Object({
+                status: t.Literal('ok'),
+                data: projectSelectSchema,
+            }),
+        }
+    )
     .get('/:id/thumbnail', async (context) => {
         const {
             params: { id },
@@ -157,17 +181,32 @@ export const ProjectRoute = new Elysia({
                 params: { id },
             } = context;
             const token = await db.transaction(async (tx) => {
+                const bcTx = await akaraCarbonContract.mint(
+                    body.amount,
+                    '0x',
+                    new Date(body.endDate).getTime() * 1000
+                );
+                const receipt = await bcTx.wait();
+                const event = receipt.logs.find(
+                    (log: any) => log.fragment?.name === 'TokenMinted'
+                );
+                if (!event) {
+                    throw new Error('TokenMinted event not found');
+                }
+                const tokenId = event.args.tokenId;
+
                 const [token] = await tx
                     .insert(schema.projectTokens)
                     .values({
                         id: generateNanoId(),
                         projectId: id,
-                        tokenId: null,
+                        tokenId: tokenId,
+                        unsoldAmount: body.amount,
                         ...body,
                     })
                     .returning();
 
-                return token;
+                return { ...token, transactionHash: bcTx.hash, bcTx: bcTx };
             });
 
             return {
@@ -185,7 +224,122 @@ export const ProjectRoute = new Elysia({
                     'tokenId',
                     'projectId',
                     'createdAt',
+                    'unsoldAmount',
                 ]).properties,
+            }),
+        }
+    )
+    .post(
+        '/:id/token/:tokenId/buy',
+        async (context) => {
+            const session = await auth.api.getSession({
+                headers: context.request.headers,
+            });
+
+            if (!session) {
+                throw new Error('Unauthorized');
+            }
+
+            if (!session.user.wallet) {
+                throw new Error('You need to set your wallet address');
+            }
+
+            const { body } = context;
+            const tokenId = parseInt(context.params.tokenId);
+            const bcTx = await db.transaction(async (tx) => {
+                const bcTx = await akaraCarbonContract.safeTransferFrom(
+                    process.env.WALLET_PUBLIC_KEY,
+                    session.user.wallet,
+                    context.params.tokenId,
+                    body.amount,
+                    '0x'
+                );
+                await bcTx.wait();
+
+                const [token] = await tx
+                    .select()
+                    .from(schema.projectTokens)
+                    .where(
+                        and(
+                            eq(schema.projectTokens.tokenId, tokenId),
+                            eq(
+                                schema.projectTokens.projectId,
+                                context.params.id
+                            )
+                        )
+                    );
+                if (!token) {
+                    throw new Error('Token not found');
+                }
+
+                if (parseFloat(token.unsoldAmount) < body.amount) {
+                    throw new Error('Insufficient amount');
+                }
+
+                await db
+                    .update(schema.projectTokens)
+                    .set({
+                        unsoldAmount: (
+                            parseFloat(token.unsoldAmount) - body.amount
+                        ).toString(),
+                    })
+                    .where(
+                        and(
+                            eq(schema.projectTokens.tokenId, tokenId),
+                            eq(
+                                schema.projectTokens.projectId,
+                                context.params.id
+                            )
+                        )
+                    );
+
+                const [userToken] = await tx
+                    .select()
+                    .from(schema.userTokens)
+                    .where(
+                        and(
+                            eq(schema.userTokens.tokenId, tokenId),
+                            eq(schema.userTokens.userId, session.user.id)
+                        )
+                    );
+                const oldAmount = userToken ? parseFloat(userToken.amount) : 0;
+
+                await db
+                    .insert(schema.userTokens)
+                    .values({
+                        tokenId: tokenId,
+                        userId: session.user.id,
+                        amount: body.amount.toString(),
+                    })
+                    .onConflictDoUpdate({
+                        target: [
+                            schema.userTokens.tokenId,
+                            schema.userTokens.userId,
+                        ],
+                        set: {
+                            amount: (oldAmount + body.amount).toString(),
+                        },
+                    });
+
+                return bcTx;
+            });
+
+            return {
+                status: 'ok' as const,
+                data: {
+                    transactionHash: bcTx.hash,
+                },
+            };
+        },
+        {
+            body: t.Object({
+                amount: t.Number(),
+            }),
+            response: t.Object({
+                status: t.Literal('ok'),
+                data: t.Object({
+                    transactionHash: t.String(),
+                }),
             }),
         }
     );

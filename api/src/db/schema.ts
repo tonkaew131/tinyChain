@@ -22,6 +22,7 @@ export const users = pgTable('user', {
     updatedAt: timestamp().notNull(),
 
     developerId: text().references(() => projectDevelopers.id),
+    wallet: text(),
 
     role: text(),
     banned: boolean(),
@@ -80,7 +81,7 @@ export const projects = pgTable('project', {
     developerId: text()
         .notNull()
         .references(() => projectDevelopers.id),
-
+    location: text().notNull(),
     name: text().notNull(),
     description: text().default('').notNull(),
 
@@ -97,8 +98,14 @@ export const projectTokens = pgTable('project_token', {
 
     name: text().notNull(),
     amount: decimal().notNull(),
-    startDate: timestamp().notNull(),
-    endDate: timestamp().notNull(),
+    unsoldAmount: decimal().notNull(),
+    pricePerToken: decimal().default('0').notNull(),
+    startDate: timestamp({
+        mode: 'string',
+    }).notNull(),
+    endDate: timestamp({
+        mode: 'string',
+    }).notNull(),
 
     createdAt: timestamp().defaultNow().notNull(),
 });
@@ -127,6 +134,7 @@ export const userTokens = pgTable(
         userId: text()
             .notNull()
             .references(() => users.id, { onDelete: 'cascade' }),
+        amount: decimal().notNull(),
         boughtAt: timestamp().defaultNow().notNull(),
     },
     (table) => [
@@ -135,3 +143,13 @@ export const userTokens = pgTable(
         }),
     ]
 );
+
+export const userWallets = pgTable('user_wallet', {
+    id: text().primaryKey(),
+    userId: text()
+        .notNull()
+        .references(() => users.id, { onDelete: 'cascade' }),
+    amount: decimal().notNull(),
+    createdAt: timestamp().notNull(),
+    updatedAt: timestamp().notNull(),
+});
