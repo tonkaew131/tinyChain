@@ -169,5 +169,18 @@ export default function CustomerDashboard() {
                         <span className="text-sm font-medium">Livestock</span>
                         <span className="text-sm text-muted-foreground">15%</span>
                       </div>
-                      <div className="mt-2 h-2 w-\
+                      <div className="mt-2 h-2 w-full rounded-full bg-muted">
+                        <div className="h-full w-[15%] rounded-full bg-primary" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          </TabsContent>
+        </Tabs>
+        </div>
 
+  )
+}
