@@ -23,19 +23,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-      <QueryProvider>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader />
-            <div className="flex-1">
-                {children}
-
+        <QueryProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+              <SiteFooter />
             </div>
-            <SiteFooter />
-          </div>
-          <Toaster richColors  closeButton/>
-        </ThemeProvider>
-      </QueryProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   )
