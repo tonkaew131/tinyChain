@@ -1,5 +1,8 @@
 import Elysia, { error, t } from 'elysia';
 
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
 import { eq } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-typebox';
 
@@ -35,8 +38,15 @@ export const ProjectRoute = new Elysia({
                 headers: context.request.headers,
             });
 
-            if (!session) return error(401);
-            if (!session.user.developerId) return error(403);
+            console.log('headers', context.request.headers);
+
+            if (!session) {
+                return error(401);
+            }
+            if (!session.user.developerId) {
+                return error(403, "You're not a developer");
+            }
+
             const [developer] = await db
                 .select()
                 .from(schema.projectDevelopers)
@@ -46,13 +56,26 @@ export const ProjectRoute = new Elysia({
             if (!developer) return error(403);
 
             const { body } = context;
-            const project = await db
-                .insert(schema.projects)
-                .values({
-                    ...body,
-                    developerId: developer.id,
-                })
-                .returning();
+            const project = await db.transaction(async (tx) => {
+                const [project] = await tx
+                    .insert(schema.projects)
+                    .values({
+                        ...body,
+                        developerId: developer.id,
+                    })
+                    .returning();
+
+                const basedDir = path.join('volume', 'projects', project.id);
+                await fs.mkdir(path.join(basedDir), {
+                    recursive: true,
+                });
+                await Bun.write(
+                    path.join(basedDir, 'thumbnail'),
+                    body.thumbnail
+                );
+
+                return project;
+            });
 
             return {
                 status: 'ok' as const,
