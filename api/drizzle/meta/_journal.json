@@ -99,6 +99,13 @@
             "when": 1743102320163,
             "tag": "0013_Add amount to user tokens",
             "breakpoints": true
+        },
+        {
+            "idx": 14,
+            "version": "7",
+            "when": 1743105404185,
+            "tag": "0014_Add balance to users",
+            "breakpoints": true
         }
     ]
 }

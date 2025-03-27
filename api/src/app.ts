@@ -3,6 +3,7 @@ import { Elysia } from 'elysia';
 import { AuthRoute } from './routes/auth';
 import { DeveloperRoute } from './routes/developer';
 import { HelloWorldRoute } from './routes/hello-world';
+import { PaymentRoute } from './routes/payment';
 import { ProjectRoute } from './routes/project';
 import { auth } from './utils/auth';
 import swagger from '@elysiajs/swagger';
@@ -46,6 +47,7 @@ const app = new Elysia()
     .use(AuthRoute)
     .use(ProjectRoute)
     .use(DeveloperRoute)
+    .use(PaymentRoute)
     .use(HelloWorldRoute)
     .get('/', () => 'Hello Elysia')
     .listen(3001);

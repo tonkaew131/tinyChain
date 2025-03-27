@@ -3,7 +3,7 @@ import Elysia, { error, t } from 'elysia';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { and, eq } from 'drizzle-orm';
+import { and, eq, getTableColumns } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-typebox';
 
 import { akaraCarbonContract } from '@api/contracts/AkaraCarbon';
@@ -18,21 +18,44 @@ const projectInsertSchema = createInsertSchema(schema.projects);
 const projectTokenSelectSchema = createSelectSchema(schema.projectTokens);
 const projectTokenInsertSchema = createInsertSchema(schema.projectTokens);
 
+const projectDeveloperSelectSchema = createSelectSchema(
+    schema.projectDevelopers
+);
+const projectDeveloperInsertSchema = createInsertSchema(
+    schema.projectDevelopers
+);
+
 export const ProjectRoute = new Elysia({
     prefix: '/project',
 })
     .get(
         '/',
         async () => {
+            const projects = await db
+                .select({
+                    ...getTableColumns(schema.projects),
+                    developer: schema.projectDevelopers.name,
+                })
+                .from(schema.projects)
+                .innerJoin(
+                    schema.projectDevelopers,
+                    eq(schema.projectDevelopers.id, schema.projects.developerId)
+                );
+
             return {
                 status: 'ok' as const,
-                data: await db.select().from(schema.projects),
+                data: projects,
             };
         },
         {
             response: t.Object({
                 status: t.Literal('ok'),
-                data: t.Array(t.Object({ ...projectSelectSchema.properties })),
+                data: t.Array(
+                    t.Object({
+                        ...projectSelectSchema.properties,
+                        developer: t.String(),
+                    })
+                ),
             }),
         }
     )

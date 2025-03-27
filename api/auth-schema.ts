@@ -20,6 +20,7 @@ export const user = pgTable('user', {
     banExpires: timestamp('ban_expires'),
     developerId: text('developer_id'),
     wallet: text('wallet'),
+    balance: integer('balance').notNull(),
 });
 
 export const session = pgTable('session', {

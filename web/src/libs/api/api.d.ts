@@ -133,6 +133,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    '/payment/add': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations['postPaymentAdd'];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     '/': {
         parameters: {
             query?: never;
@@ -203,6 +219,7 @@ export interface operations {
                             description: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
+                            developer: string;
                         }[];
                     };
                     'multipart/form-data': {
@@ -216,6 +233,7 @@ export interface operations {
                             description: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
+                            developer: string;
                         }[];
                     };
                     'text/plain': {
@@ -229,6 +247,7 @@ export interface operations {
                             description: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
+                            developer: string;
                         }[];
                     };
                 };
@@ -588,6 +607,48 @@ export interface operations {
                             retiredCredits: number;
                             totalProjects: number;
                         };
+                    };
+                };
+            };
+        };
+    };
+    postPaymentAdd: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                'application/json': {
+                    amount: number;
+                };
+                'multipart/form-data': {
+                    amount: number;
+                };
+                'text/plain': {
+                    amount: number;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': {
+                        /** @constant */
+                        status: 'ok';
+                    };
+                    'multipart/form-data': {
+                        /** @constant */
+                        status: 'ok';
+                    };
+                    'text/plain': {
+                        /** @constant */
+                        status: 'ok';
                     };
                 };
             };

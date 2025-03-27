@@ -7,7 +7,7 @@ import { Resend } from 'resend';
 import { db } from '@api/db';
 import * as schema from '@api/db/schema';
 
-const resend = new Resend(process.env.RENDER_API_KEY);
+const resend = new Resend(process.env.RENDER_API_KEY || 're_123');
 
 export const auth = betterAuth({
     advanced: {
@@ -50,6 +50,12 @@ export const auth = betterAuth({
                 type: 'string',
                 required: false,
                 input: true,
+            },
+            balance: {
+                type: 'number',
+                required: true,
+                defaultValue: 0,
+                input: false,
             },
         },
     },

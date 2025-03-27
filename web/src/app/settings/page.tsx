@@ -2,7 +2,7 @@
 
 // import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
-
+import { ResetPass } from '@/components/ui/resetpass';
 import { Button } from '@/components/ui/button';
 
 export default function SettingPage() {
@@ -84,12 +84,9 @@ export default function SettingPage() {
 
                 <div className="flex items-center justify-between py-4">
                     <div>
-                        <p className="text-sm text-gray-400">Password</p>
-                        <p className="text-base font-medium">********</p>
+                <p className="text-base font-medium">********</p>
                     </div>
-                    <Button className="bg-transparent text-blue-400 hover:bg-transparent hover:underline">
-                        Change
-                    </Button>
+
                 </div>
             </div>
         </div>

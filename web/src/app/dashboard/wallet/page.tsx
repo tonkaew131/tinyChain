@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { CreditCard, QrCode, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { authClient } from '@/lib/auth-client';
+
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -31,6 +33,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function WalletPage() {
+    const { useSession, signOut } = authClient;
+    const { data } = useSession();
     const [depositType, setDepositType] = useState<string>('qr');
     const [depositAmount, setDepositAmount] = useState<string>('');
     const [withdrawAmount, setWithdrawAmount] = useState<string>('');
@@ -82,7 +86,7 @@ export default function WalletPage() {
                     <CardTitle>Available Balance</CardTitle>
                     <CardDescription>
                         <span className="text-2xl font-bold">
-                            ฿ {availableBalance.toLocaleString()}
+                            ฿ {data?.user.balance.toLocaleString()}
                         </span>
                     </CardDescription>
                 </CardHeader>

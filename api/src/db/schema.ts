@@ -23,6 +23,12 @@ export const users = pgTable('user', {
 
     developerId: text().references(() => projectDevelopers.id),
     wallet: text(),
+    balance: decimal({
+        mode: 'number',
+    })
+        .default(0)
+        .notNull(),
+
     role: text(),
     banned: boolean(),
     banReason: text(),
@@ -148,7 +154,7 @@ export const userWallets = pgTable('user_wallet', {
     userId: text()
         .notNull()
         .references(() => users.id, { onDelete: 'cascade' }),
-    amount: decimal().notNull(),
+    amount: decimal().notNull().default('0'),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().notNull(),
 });
