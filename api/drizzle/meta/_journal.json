@@ -64,6 +64,13 @@
             "when": 1743088865089,
             "tag": "0008_Add id to project token",
             "breakpoints": true
+        },
+        {
+            "idx": 9,
+            "version": "7",
+            "when": 1743091509339,
+            "tag": "0009_Add user tokens",
+            "breakpoints": true
         }
     ]
 }

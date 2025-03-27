@@ -99,10 +99,27 @@ export const ProjectRoute = new Elysia({
                 ]).properties,
                 thumbnail: t.File({
                     maxSize: 1024 * 1024 * 10,
+                    type: ['image/jpeg'],
                 }),
             }),
         }
     )
+    .get('/:id/thumbnail', async (context) => {
+        const {
+            params: { id },
+            set,
+        } = context;
+
+        const file = Bun.file(
+            path.join('../volume/upload', 'projects', id, 'thumbnail')
+        );
+        if ((await file.exists()) === false) {
+            return error(404);
+        }
+
+        set.headers['content-type'] = 'image/jpeg';
+        return file;
+    })
     .post(
         '/:id/token',
         async (context) => {

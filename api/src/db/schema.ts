@@ -6,6 +6,7 @@ import {
     pgEnum,
     pgSequence,
     pgTable,
+    primaryKey,
     text,
     timestamp,
 } from 'drizzle-orm/pg-core';
@@ -116,3 +117,21 @@ export const projectDevelopers = pgTable('project_developer', {
 
     createdAt: timestamp().defaultNow().notNull(),
 });
+
+export const userTokens = pgTable(
+    'user_token',
+    {
+        tokenId: integer()
+            .notNull()
+            .references(() => projectTokens.tokenId),
+        userId: text()
+            .notNull()
+            .references(() => users.id, { onDelete: 'cascade' }),
+        boughtAt: timestamp().defaultNow().notNull(),
+    },
+    (table) => [
+        primaryKey({
+            columns: [table.tokenId, table.userId],
+        }),
+    ]
+);

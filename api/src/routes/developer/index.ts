@@ -1,15 +1,59 @@
-import Elysia from 'elysia';
+import Elysia, { error, t } from 'elysia';
+
+import { eq } from 'drizzle-orm';
 
 import { db } from '@api/db';
 import * as schema from '@api/db/schema';
+import { auth } from '@api/utils/auth';
 
 export const DeveloperRoute = new Elysia({
     prefix: '/developer',
-}).get('/', async () => {
-    const developers = await db.select().from(schema.projectDevelopers);
+})
+    .get('/', async () => {
+        const developers = await db.select().from(schema.projectDevelopers);
 
-    return {
-        status: 'ok' as const,
-        data: developers,
-    };
-});
+        return {
+            status: 'ok' as const,
+            data: developers,
+        };
+    })
+    .get(
+        '/stats',
+        async (context) => {
+            const session = await auth.api.getSession({
+                headers: context.request.headers,
+            });
+
+            if (!session) {
+                throw new Error('Unauthorized');
+            }
+
+            const [stats] = await db
+                .select()
+                .from(schema.userTokens)
+                .where(eq(schema.userTokens.userId, session.user.id));
+
+            return {
+                status: 'ok' as const,
+                data: {
+                    totalCarbonOffset: 0,
+                    activeCredits: 0,
+                    retiredCredits: 0,
+                    totalProjects: 0,
+                },
+            };
+        },
+        {
+            response: {
+                200: t.Object({
+                    status: t.Literal('ok'),
+                    data: t.Object({
+                        totalCarbonOffset: t.Number(),
+                        activeCredits: t.Number(),
+                        retiredCredits: t.Number(),
+                        totalProjects: t.Number(),
+                    }),
+                }),
+            },
+        }
+    );

@@ -39,6 +39,7 @@ export default function RootLayout({
                             <div className="flex-1">{children}</div>
                             <SiteFooter />
                         </div>
+                        <Toaster richColors closeButton />
                     </ThemeProvider>
                 </QueryProvider>
             </body>
