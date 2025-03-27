@@ -67,6 +67,7 @@ export const ProjectRoute = new Elysia({
                     'updatedAt',
                     'developerId',
                 ]).properties,
+                thumbnail: t.File(),
             }),
         }
     );

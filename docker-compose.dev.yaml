@@ -10,3 +10,19 @@ services:
       - "34491:5432"
     volumes:
       - ./volume/posgres:/var/lib/postgresql/data
+  traefik:
+    image: "traefik:v3.3"
+    container_name: traefik
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--providers.file.filename=/dynamic.yml"
+      - "--providers.file.watch=true"
+      - "--api.insecure=true"
+    ports:
+      - "65535:80"
+      - "8080:8080"  # Traefik dashboard (optional)
+    volumes:
+      - "./dynamic.yml:/dynamic.yml:ro"
+    # For Linux: to allow using "host.docker.internal", add the following line:
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"

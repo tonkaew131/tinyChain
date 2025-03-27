@@ -18,7 +18,7 @@ export default function Home() {
             Join the fight against climate change
           </h2>
           <p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-            Whether you're a farmer with sustainable practices or a business looking to offset your carbon footprint,
+            Whether you&apos;re a farmer with sustainable practices or a business looking to offset your carbon footprint,
             AkaraCarbon connects you with the right partners.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row">
