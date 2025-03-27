@@ -118,33 +118,11 @@ export function ProjectGrid() {
         const loadProjects = async () => {
             try {
                 setIsLoading(true);
-                const projectResponse = await fetchProject();
-                const projectsWithThumbnails = await Promise.all(
-                    projectResponse.data.map(async (project: Project) => {
-                        try {
-                            const thumbnailData = await fetchProjectThumbnail(
-                                project.id
-                            );
-                            console.log(
-                                `Thumbnail for project ${project.id}:`,
-                                thumbnailData
-                            );
-
-                            return {
-                                ...project,
-                                image: thumbnailData.data,
-                            };
-                        } catch (thumbnailError) {
-                            console.error(
-                                `Failed to fetch thumbnail for project ${project.id}`,
-                                thumbnailError
-                            );
-                            return project;
-                        }
-                    })
+                const projectResponse = await fetchProject().then((res) =>
+                    setProjectData(res.data)
                 );
 
-                setProjectData(projectsWithThumbnails);
+                // setProjectData(projectsWithThumbnails);
                 setIsLoading(false);
             } catch (err) {
                 setError(
@@ -178,7 +156,7 @@ export function ProjectGrid() {
                     >
                         <div className="relative h-48 w-full overflow-hidden">
                             <Image
-                                src={project.image || '/placeholder.svg'}
+                                src={`${process.env.NEXT_PUBLIC_API_URL}/project/${project.id}/thumbnail`}
                                 alt={project.name}
                                 width={200}
                                 height={200}

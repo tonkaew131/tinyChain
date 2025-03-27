@@ -16,8 +16,4 @@ const fetchProjectThumbnail = async (id: string) => {
     return response;
 };
 
-const getById = async (id: string) => {
-    $api.account;
-};
-
 export { fetchProject, fetchProjectThumbnail };

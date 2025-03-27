@@ -1,7 +1,6 @@
 'use client';
 
-import Image from 'next/image';
-
+// import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
 
 import { Button } from '@/components/ui/button';

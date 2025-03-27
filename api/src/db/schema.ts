@@ -23,7 +23,6 @@ export const users = pgTable('user', {
 
     developerId: text().references(() => projectDevelopers.id),
     wallet: text(),
-
     role: text(),
     banned: boolean(),
     banReason: text(),

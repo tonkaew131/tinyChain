@@ -108,9 +108,9 @@ export function UserNav() {
                                 Dashboard
                             </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
+                        {/* <DropdownMenuItem asChild>
                             <Link href="/profile">Profile</Link>
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                         <DropdownMenuItem asChild>
                             <Link href="/settings">Settings</Link>
                         </DropdownMenuItem>

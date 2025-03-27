@@ -32,7 +32,7 @@ export const ProjectRoute = new Elysia({
         {
             response: t.Object({
                 status: t.Literal('ok'),
-                data: t.Array(projectSelectSchema),
+                data: t.Array(t.Object({ ...projectSelectSchema.properties })),
             }),
         }
     )
@@ -144,6 +144,32 @@ export const ProjectRoute = new Elysia({
         set.headers['content-type'] = 'image/jpeg';
         return file;
     })
+    .get(
+        '/:id/token',
+        async (context) => {
+            const [project] = await db
+                .select()
+                .from(schema.projects)
+                .where(eq(schema.projects.id, context.params.id));
+            if (!project) {
+                throw new Error('Not found');
+            }
+
+            return {
+                status: 'ok' as const,
+                data: await db
+                    .select()
+                    .from(schema.projectTokens)
+                    .where(eq(schema.projectTokens.projectId, project.id)),
+            };
+        },
+        {
+            response: t.Object({
+                status: t.Literal('ok'),
+                data: t.Array(projectTokenSelectSchema),
+            }),
+        }
+    )
     .post(
         '/:id/token',
         async (context) => {

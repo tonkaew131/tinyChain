@@ -1,9 +1,13 @@
+import { generateResetPasswordEmail } from './email';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, openAPI } from 'better-auth/plugins';
+import { Resend } from 'resend';
 
 import { db } from '@api/db';
 import * as schema from '@api/db/schema';
+
+const resend = new Resend(process.env.RENDER_API_KEY);
 
 export const auth = betterAuth({
     advanced: {
@@ -24,6 +28,14 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
+        sendResetPassword: async (data, request) => {
+            const { data: emailData, error } = await resend.emails.send({
+                from: 'noreply@athichal.com',
+                to: data.user.email,
+                subject: 'AkaraCarbon: Reset your password',
+                html: generateResetPasswordEmail(data.user.name, data.url),
+            });
+        },
     },
     plugins: [admin(), openAPI()],
     basePath: '/auth',

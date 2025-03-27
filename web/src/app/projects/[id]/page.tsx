@@ -1,6 +1,9 @@
-import Link from 'next/link';
+'use client';
 
-import { ArrowLeft, Calendar, Globe, Leaf, MapPin, Shield } from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+
+import { ArrowLeft, MapPin, Shield } from 'lucide-react';
 
 import { ProjectGallery } from '@/components/project-gallery';
 import { ProjectPurchaseForm } from '@/components/project-purchase-form';
@@ -13,9 +16,27 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function ProjectPage({ params }: { params: { id: string } }) {
+import { $api } from '@/libs/api';
+
+export default function ProjectPage() {
+    const params = useParams<{
+        id: string;
+    }>();
+    const projectResult = $api.useQuery('get', '/project/{id}', {
+        params: {
+            path: {
+                id: params.id,
+            },
+        },
+    });
+    const projectTokenResult = $api.useQuery('get', '/project/{id}/token', {
+        params: {
+            path: {
+                id: params.id,
+            },
+        },
+    });
     // This would be fetched from an API in a real application
     const project = {
         id: Number.parseInt(params.id),
@@ -76,7 +97,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">
-                                {project.title}
+                                {projectResult.data?.data.name}
                             </h1>
                             <div className="mt-2 flex items-center gap-2">
                                 <Badge>{project.type}</Badge>
@@ -92,7 +113,8 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-2xl font-bold">
-                                ${project.price}
+                                $
+                                {projectTokenResult.data?.data[0].pricePerToken}
                             </span>
                             <span className="text-muted-foreground">
                                 per ton CO₂e
@@ -103,192 +125,18 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                     <div className="md:col-span-2">
-                        <ProjectGallery images={project.images} />
+                        <ProjectGallery
+                            images={[
+                                `http://localhost:65535/api/project/${params.id}/thumbnail`,
+                            ]}
+                        />
 
-                        <Tabs defaultValue="overview" className="mt-8">
-                            <TabsList>
-                                <TabsTrigger value="overview">
-                                    Overview
-                                </TabsTrigger>
-                                <TabsTrigger value="details">
-                                    Project Details
-                                </TabsTrigger>
-                                <TabsTrigger value="methodology">
-                                    Methodology
-                                </TabsTrigger>
-                                <TabsTrigger value="verification">
-                                    Verification
-                                </TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="overview" className="space-y-4">
-                                <div>
-                                    <h3 className="mb-2 text-xl font-semibold">
-                                        Project Description
-                                    </h3>
-                                    <p>{project.description}</p>
-                                </div>
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                                    <Card>
-                                        <CardHeader className="pb-2">
-                                            <CardTitle className="flex items-center text-sm font-medium">
-                                                <Leaf className="mr-2 h-4 w-4 text-primary" />
-                                                Carbon Credits
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-2xl font-bold">
-                                                {project.carbonCredits.toLocaleString()}{' '}
-                                                tons
-                                            </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                Available for purchase
-                                            </p>
-                                        </CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader className="pb-2">
-                                            <CardTitle className="flex items-center text-sm font-medium">
-                                                <Globe className="mr-2 h-4 w-4 text-primary" />
-                                                Location
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-2xl font-bold">
-                                                {project.location}
-                                            </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                Project location
-                                            </p>
-                                        </CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader className="pb-2">
-                                            <CardTitle className="flex items-center text-sm font-medium">
-                                                <Calendar className="mr-2 h-4 w-4 text-primary" />
-                                                Project Timeline
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-lg font-bold">
-                                                {new Date(
-                                                    project.startDate
-                                                ).getFullYear()}{' '}
-                                                -{' '}
-                                                {new Date(
-                                                    project.endDate
-                                                ).getFullYear()}
-                                            </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                5 year duration
-                                            </p>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </TabsContent>
-                            <TabsContent value="details" className="space-y-4">
-                                <div>
-                                    <h3 className="mb-2 text-xl font-semibold">
-                                        Sustainable Practices
-                                    </h3>
-                                    <ul className="list-disc space-y-1 pl-5">
-                                        {project.details.practices.map(
-                                            (practice, index) => (
-                                                <li key={index}>{practice}</li>
-                                            )
-                                        )}
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h3 className="mb-2 text-xl font-semibold">
-                                        Environmental Benefits
-                                    </h3>
-                                    <ul className="list-disc space-y-1 pl-5">
-                                        {project.details.benefits.map(
-                                            (benefit, index) => (
-                                                <li key={index}>{benefit}</li>
-                                            )
-                                        )}
-                                    </ul>
-                                </div>
-                            </TabsContent>
-                            <TabsContent value="methodology">
-                                <div className="space-y-4">
-                                    <h3 className="text-xl font-semibold">
-                                        Methodology
-                                    </h3>
-                                    <p>{project.methodology}</p>
-                                    <p>
-                                        This methodology quantifies the
-                                        greenhouse gas emission reductions and
-                                        removals from the adoption of improved
-                                        agricultural land management practices.
-                                        The methodology applies to agricultural
-                                        land management activities that reduce
-                                        net greenhouse gas emissions by
-                                        increasing carbon stocks in soils and
-                                        woody biomass and/or decreasing
-                                        emissions of carbon dioxide, methane,
-                                        and nitrous oxide.
-                                    </p>
-                                    <p>
-                                        Key elements of the methodology include:
-                                    </p>
-                                    <ul className="list-disc space-y-1 pl-5">
-                                        <li>
-                                            Baseline determination through
-                                            historical land management practices
-                                        </li>
-                                        <li>
-                                            Monitoring of implemented
-                                            sustainable practices
-                                        </li>
-                                        <li>
-                                            Calculation of carbon sequestration
-                                            rates based on soil sampling
-                                        </li>
-                                        <li>
-                                            Accounting for emissions from
-                                            agricultural inputs and operations
-                                        </li>
-                                        <li>
-                                            Consideration of leakage and
-                                            permanence risks
-                                        </li>
-                                    </ul>
-                                </div>
-                            </TabsContent>
-                            <TabsContent value="verification">
-                                <div className="space-y-4">
-                                    <h3 className="text-xl font-semibold">
-                                        Verification Process
-                                    </h3>
-                                    <p>{project.details.verification}</p>
-                                    <p>The verification process includes:</p>
-                                    <ul className="list-disc space-y-1 pl-5">
-                                        <li>
-                                            Annual site visits by independent
-                                            auditors
-                                        </li>
-                                        <li>
-                                            Soil sampling and analysis to
-                                            measure carbon content
-                                        </li>
-                                        <li>
-                                            Review of farm management records
-                                            and practices
-                                        </li>
-                                        <li>
-                                            Verification against the methodology
-                                            requirements
-                                        </li>
-                                        <li>
-                                            Issuance of verified carbon units
-                                            after successful audit
-                                        </li>
-                                    </ul>
-                                </div>
-                            </TabsContent>
-                        </Tabs>
+                        <div>
+                            <h3 className="mb-2 mt-5 text-xl font-semibold">
+                                Project Description
+                            </h3>
+                            <p>{projectResult.data?.data.description}</p>
+                        </div>
                     </div>
 
                     <div>
@@ -303,41 +151,14 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                             <CardContent>
                                 <ProjectPurchaseForm
                                     projectId={project.id}
-                                    price={project.price}
-                                    availableCredits={project.carbonCredits}
+                                    price={Number(
+                                        projectTokenResult.data?.data[0]
+                                            .pricePerToken
+                                    )}
+                                    availableCredits={Number(
+                                        projectTokenResult.data?.data[0].amount
+                                    )}
                                 />
-                            </CardContent>
-                        </Card>
-
-                        <Card className="mt-6">
-                            <CardHeader>
-                                <CardTitle>Project Developer</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex items-center gap-4">
-                                    <img
-                                        src={
-                                            project.farmer.image ||
-                                            '/placeholder.svg'
-                                        }
-                                        alt={project.farmer.name}
-                                        className="h-16 w-16 rounded-full object-cover"
-                                    />
-                                    <div>
-                                        <h3 className="font-semibold">
-                                            {project.farmer.name}
-                                        </h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            Member since {project.farmer.since}
-                                        </p>
-                                    </div>
-                                </div>
-                                <p className="text-sm">
-                                    {project.farmer.description}
-                                </p>
-                                <Button variant="outline" className="w-full">
-                                    Contact Developer
-                                </Button>
                             </CardContent>
                         </Card>
                     </div>

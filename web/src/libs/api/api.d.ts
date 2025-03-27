@@ -75,7 +75,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations['getProjectByIdToken'];
         put?: never;
         /** Add a token to the project */
         post: operations['postProjectByIdToken'];
@@ -360,6 +360,74 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    getProjectByIdToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            tokenId: number | null;
+                            projectId: string;
+                            name: string;
+                            amount: string;
+                            unsoldAmount: string;
+                            pricePerToken: string;
+                            startDate: string;
+                            endDate: string;
+                            createdAt: Record<string, never>;
+                        }[];
+                    };
+                    'multipart/form-data': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            tokenId: number | null;
+                            projectId: string;
+                            name: string;
+                            amount: string;
+                            unsoldAmount: string;
+                            pricePerToken: string;
+                            startDate: string;
+                            endDate: string;
+                            createdAt: Record<string, never>;
+                        }[];
+                    };
+                    'text/plain': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            tokenId: number | null;
+                            projectId: string;
+                            name: string;
+                            amount: string;
+                            unsoldAmount: string;
+                            pricePerToken: string;
+                            startDate: string;
+                            endDate: string;
+                            createdAt: Record<string, never>;
+                        }[];
+                    };
+                };
             };
         };
     };
