@@ -4,14 +4,14 @@
  */
 
 export interface paths {
-    "/swagger/all-json": {
+    '/swagger/all-json': {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getSwaggerAll-json"];
+        get: operations['getSwaggerAll-json'];
         put?: never;
         post?: never;
         delete?: never;
@@ -20,30 +20,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/project/": {
+    '/project/': {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getProject"];
+        get: operations['getProject'];
         put?: never;
-        post: operations["postProject"];
+        post: operations['postProject'];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/": {
+    '/': {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getIndex"];
+        get: operations['getIndex'];
         put?: never;
         post?: never;
         delete?: never;
@@ -64,7 +64,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    "getSwaggerAll-json": {
+    'getSwaggerAll-json': {
         parameters: {
             query?: never;
             header?: never;
@@ -95,9 +95,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
+                    'application/json': {
                         /** @constant */
-                        status: "ok";
+                        status: 'ok';
                         data: {
                             id: string;
                             developerId: string;
@@ -107,9 +107,9 @@ export interface operations {
                             updatedAt: Record<string, never>;
                         }[];
                     };
-                    "multipart/form-data": {
+                    'multipart/form-data': {
                         /** @constant */
-                        status: "ok";
+                        status: 'ok';
                         data: {
                             id: string;
                             developerId: string;
@@ -119,9 +119,9 @@ export interface operations {
                             updatedAt: Record<string, never>;
                         }[];
                     };
-                    "text/plain": {
+                    'text/plain': {
                         /** @constant */
-                        status: "ok";
+                        status: 'ok';
                         data: {
                             id: string;
                             developerId: string;
@@ -144,15 +144,15 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
+                'application/json': {
                     name: string;
                     description?: string;
                 };
-                "multipart/form-data": {
+                'multipart/form-data': {
                     name: string;
                     description?: string;
                 };
-                "text/plain": {
+                'text/plain': {
                     name: string;
                     description?: string;
                 };

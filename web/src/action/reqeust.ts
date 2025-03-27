@@ -1,11 +1,11 @@
 const fetchMsg = async () => {
     const response = await fetch('/api/hello-world');
-    if(!response.ok) {
+    if (!response.ok) {
         throw new Error('Network response was not ok');
     }
     const data = await response.json();
     return data;
-}
+};
 
 const updateMsg = async (newMsg: string) => {
     const response = await fetch('/api/hello-world', {
@@ -15,11 +15,11 @@ const updateMsg = async (newMsg: string) => {
         },
         body: JSON.stringify({ message: newMsg }),
     });
-    if(!response.ok) {
+    if (!response.ok) {
         throw new Error('Network response was not ok');
     }
     const data = await response.json();
     return data;
-}
+};
 
 export { fetchMsg, updateMsg };
