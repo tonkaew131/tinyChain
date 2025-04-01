@@ -7,6 +7,7 @@ async function seed() {
             email: 'admin@akaracarbon.co.th',
             name: 'Admin',
             password: 'aA112233',
+            balance: 0,
         },
     });
     console.log('Admin seeded:', user);
