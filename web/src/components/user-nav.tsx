@@ -102,9 +102,9 @@ export function UserNav() {
                         <DropdownMenuItem asChild>
                             <Link
                                 href={
-                                    data.user.role === 'farmer'
-                                        ? '/dashboard/farmer'
-                                        : '/user/${data.user.id}'
+                                    data.user.developerId !== null
+                                        ? '/dashboard/developer'
+                                        : '/dashboard/customer'
                                 }
                             >
                                 Dashboard

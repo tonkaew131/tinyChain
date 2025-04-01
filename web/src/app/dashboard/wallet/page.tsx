@@ -32,6 +32,8 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { updateWallet } from '@/action/user';
+
 export default function WalletPage() {
     const { useSession, signOut } = authClient;
     const { data } = useSession();
@@ -45,6 +47,7 @@ export default function WalletPage() {
     const [withdrawConfirmation, setWithdrawConfirmation] =
         useState<boolean>(false);
     const [selectedBank, setSelectedBank] = useState<string>('');
+    const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     const availableBalance = 10000;
     const dailyLimit = 50000;
@@ -55,6 +58,32 @@ export default function WalletPage() {
             setShowQRCode(true);
         } else {
             setShowTransferDetails(true);
+        }
+    };
+
+    const handlePaymentConfirm = async () => {
+        try {
+            setIsProcessing(true);
+            const amount = Number.parseFloat(depositAmount);
+
+            // Call updateWallet with the deposit amount
+            // await updateWallet(amount);
+
+            toast.info('Deposit request submitted successfully!');
+            // Wait for 2 seconds to simulate processing
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            // Update the wallet again to confirm the deposit
+            await updateWallet(amount);
+
+            toast.success('Deposit completed!');
+            // resetDeposit();
+            window.location.reload();
+        } catch (error) {
+            toast.error('Failed to process deposit');
+            console.error('Deposit error:', error);
+        } finally {
+            setIsProcessing(false);
         }
     };
 
@@ -277,9 +306,18 @@ export default function WalletPage() {
                                     Please make the exact payment of ฿
                                     {Number.parseFloat(
                                         depositAmount
-                                    ).toLocaleString()}{' '}
+                                    ).toLocaleString()}
                                     including decimals
                                 </div>
+                                <Button
+                                    className="w-full"
+                                    onClick={handlePaymentConfirm}
+                                    disabled={isProcessing}
+                                >
+                                    {isProcessing
+                                        ? 'Processing...'
+                                        : 'Confirm Payment'}
+                                </Button>
                             </CardContent>
                             <CardFooter>
                                 <Button
@@ -407,7 +445,8 @@ export default function WalletPage() {
                                     <div className="mb-2 flex justify-between text-sm">
                                         <span>Available Balance:</span>
                                         <span className="font-medium">
-                                            ฿{availableBalance.toLocaleString()}
+                                            ฿{' '}
+                                            {data?.user.balance.toLocaleString()}
                                         </span>
                                     </div>
 
@@ -458,7 +497,7 @@ export default function WalletPage() {
                                                     e.target.value
                                                 )
                                             }
-                                            max={availableBalance}
+                                            max={data?.user.balance || 1}
                                             required
                                             min={1}
                                         />

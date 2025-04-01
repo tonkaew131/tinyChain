@@ -1,91 +1,100 @@
 'use client';
 
-import Link from 'next/link';
+import Image from 'next/image';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Globe } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 
-import { authClient } from '@/lib/auth-client';
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import metamask from '@/../public/MetaMask-icon-fox.svg';
+
 export function MetamaskTip() {
-    // This would be replaced with actual auth state
-    const { useSession, signOut } = authClient;
-    const { data } = useSession();
+    const [account, setAccount] = useState<string | null>(null);
+    const [isInstalled, setIsInstalled] = useState(true);
 
-    if (!data) {
-        return <div className="flex gap-2">pls connect</div>;
-    }
+    useEffect(() => {
+        checkIfWalletIsInstalled();
+    }, []);
 
-    console.log(data);
+    const checkIfWalletIsInstalled = () => {
+        const { ethereum } = window as any;
+        if (!ethereum) {
+            setIsInstalled(false);
+        }
+    };
+
+    const connectWallet = async () => {
+        try {
+            const { ethereum } = window as any;
+            if (!ethereum) {
+                alert('Please install MetaMask!');
+                return;
+            }
+
+            const accounts = await ethereum.request({
+                method: 'eth_requestAccounts',
+            });
+            setAccount(accounts[0]);
+        } catch (error) {
+            console.error('Error connecting to MetaMask:', error);
+        }
+    };
+
+    const disconnectWallet = () => {
+        setAccount(null);
+    };
 
     return (
-        <>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        className="relative h-8 w-8 rounded-full"
-                    >
-                        <div>
-                            <Button
-                                variant="ghost"
-                                className="relative h-8 w-8 rounded-full"
-                            >
-                                <Globe />
-                            </Button>
-                        </div>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <div
+                    className="tooltip tooltip-bottom"
+                    data-tip={`${account ? `Address:\n${account.slice(0, 6)}...${account.slice(-4)}` : 'MetaMask not installed'}`}
+                >
+                    <Button variant="ghost" size="icon">
+                        <Image
+                            src={metamask}
+                            alt="MetaMask"
+                            className="h-4 w-4"
+                        />
                     </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal">
-                        <div className="flex flex-col space-y-1">
-                            <p className="text-sm font-medium leading-none">
-                                {data.user.name}
-                            </p>
-                            <p className="text-xs leading-none text-muted-foreground">
-                                {data.user.email}
-                            </p>
-                        </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href={
-                                    data.user.role === 'farmer'
-                                        ? '/dashboard/farmer'
-                                        : '/user/${data.user.id}'
-                                }
-                            >
-                                Dashboard
-                            </Link>
-                        </DropdownMenuItem>
-                        {/* <DropdownMenuItem asChild>
-                            <Link href="/profile">Profile</Link>
-                        </DropdownMenuItem> */}
-                        <DropdownMenuItem asChild>
-                            <Link href="/settings">Settings</Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => signOut()}>
-                        Log out
+                </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                {!isInstalled ? (
+                    <DropdownMenuItem
+                        onClick={() =>
+                            window.open(
+                                'https://metamask.io/download/',
+                                '_blank'
+                            )
+                        }
+                    >
+                        Install MetaMask
                     </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </>
+                ) : account ? (
+                    <>
+                        <DropdownMenuItem disabled>
+                            {account.slice(0, 6)}...{account.slice(-4)}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={disconnectWallet}>
+                            Disconnect
+                        </DropdownMenuItem>
+                    </>
+                ) : (
+                    <DropdownMenuItem onClick={connectWallet}>
+                        Connect MetaMask
+                    </DropdownMenuItem>
+                )}
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }

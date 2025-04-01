@@ -36,3 +36,7 @@ export const useChangePassword = () => {
             }),
     });
 };
+
+export const useAddWallet = () => {
+    return;
+};

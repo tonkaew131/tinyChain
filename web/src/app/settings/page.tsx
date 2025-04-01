@@ -1,17 +1,14 @@
 'use client';
 
 // import Image from 'next/image';
+// import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
+
 import { ResetPass } from '@/components/ui/resetpass';
-import { Button } from '@/components/ui/button';
 
 export default function SettingPage() {
     const { useSession } = authClient;
     const { data } = useSession();
-
-    // const handleChangePassword = () => {
-    //     alert("Change Password functionality coming soon!");
-    // };
 
     return (
         <div className="m-4 mx-auto max-w-2xl rounded-lg bg-gray-900 p-6 text-white shadow-lg">
@@ -81,12 +78,12 @@ export default function SettingPage() {
                         </p>
                     </div>
                 </div>
-
                 <div className="flex items-center justify-between py-4">
                     <div>
-                <p className="text-base font-medium">********</p>
+                        <p className="text-sm text-gray-400">Password</p>
+                        <p className="text-base font-medium">********</p>
                     </div>
-
+                    <ResetPass />
                 </div>
             </div>
         </div>
