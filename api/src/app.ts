@@ -50,7 +50,7 @@ const app = new Elysia()
     .use(PaymentRoute)
     .use(HelloWorldRoute)
     .get('/', () => 'Hello Elysia')
-    .listen(3001);
+    .listen(process.env.PORT || 3001);
 
 const { ALCHEMY_API_URL, WALLET_PRIVATE_KEY } = process.env;
 
