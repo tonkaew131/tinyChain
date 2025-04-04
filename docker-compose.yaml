@@ -11,12 +11,12 @@ services:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
         - WALLET_PRIVATE_KEY=${WALLET_PRIVATE_KEY}
         - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
-        - UPLOAD_FOLDER=${UPLOAD_FOLDER}
+        - UPLOAD_FOLDER="./upload"
         - PORT=3001
     environment:
       - NODE_ENV=production
     volumes:
-      - ./volume/upload:/app/${UPLOAD_FOLDER}
+      - ./volume/upload:/app/upload
   web:
     build:
       context: .
