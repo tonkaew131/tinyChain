@@ -26,6 +26,7 @@ export const useSignUp = () => {
             email: string;
             password: string;
             role: string;
+            balance: 0;
         }) => authClient.signUp.email(data),
     });
 };
