@@ -170,7 +170,7 @@ export default function CustomerDashboard() {
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">
-                                    {stats?.data?.projectSupported || 0}
+                                    {stats?.data?.projectSupport || 0}
                                 </div>
                                 <p className="text-xs text-muted-foreground"></p>
                             </CardContent>
