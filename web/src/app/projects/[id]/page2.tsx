@@ -127,7 +127,7 @@ export default function ProjectPage() {
                     <div className="md:col-span-2">
                         <ProjectGallery
                             images={[
-                                `http://localhost:65535/api/project/${params.id}/thumbnail`,
+                                `${process.env.NEXT_PUBLIC_API_URL}/project/${params.id}/thumbnail`,
                             ]}
                         />
 
