@@ -3,14 +3,12 @@ import Link from 'next/link';
 import { FeaturedProjects } from '@/components/featured-projects';
 import { HeroSection } from '@/components/hero-section';
 import { HowItWorks } from '@/components/how-it-works';
-import { Stats } from '@/components/stats';
 import { Button } from '@/components/ui/button';
 
 export default function Home() {
     return (
         <main className="flex-1">
             <HeroSection />
-            <Stats />
             <FeaturedProjects />
             <HowItWorks />
             <section className="container mx-auto py-12 md:py-24 lg:py-32">
