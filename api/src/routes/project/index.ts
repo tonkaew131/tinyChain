@@ -266,11 +266,13 @@ export const ProjectRoute = new Elysia({
                 const [token] = await tx
                     .insert(schema.projectTokens)
                     .values({
+                        ...body,
                         id: generateNanoId(),
                         projectId: id,
                         tokenId: tokenId,
                         unsoldAmount: body.amount,
-                        ...body,
+                        startDate: new Date(body.startDate),
+                        endDate: new Date(body.endDate),
                     })
                     .returning();
 
@@ -301,7 +303,11 @@ export const ProjectRoute = new Elysia({
                     'projectId',
                     'createdAt',
                     'unsoldAmount',
+                    'startDate',
+                    'endDate',
                 ]).properties,
+                startDate: t.String(),
+                endDate: t.String(),
             }),
         }
     )

@@ -599,22 +599,22 @@ export interface operations {
                     name: string;
                     amount: string;
                     pricePerToken?: string;
-                    startDate: Record<string, never>;
-                    endDate: Record<string, never>;
+                    startDate: string;
+                    endDate: string;
                 };
                 'multipart/form-data': {
                     name: string;
                     amount: string;
                     pricePerToken?: string;
-                    startDate: Record<string, never>;
-                    endDate: Record<string, never>;
+                    startDate: string;
+                    endDate: string;
                 };
                 'text/plain': {
                     name: string;
                     amount: string;
                     pricePerToken?: string;
-                    startDate: Record<string, never>;
-                    endDate: Record<string, never>;
+                    startDate: string;
+                    endDate: string;
                 };
             };
         };

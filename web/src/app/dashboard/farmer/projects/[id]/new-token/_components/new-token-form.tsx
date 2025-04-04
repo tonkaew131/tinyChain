@@ -61,14 +61,8 @@ export default function NewTokenForm(props: NewTokenFormProps) {
                 ...values,
                 amount: values.amount.toString(),
                 pricePerToken: values.pricePerToken.toString(),
-                startDate: values.startDate.toISOString() as unknown as Record<
-                    string,
-                    never
-                >,
-                endDate: values.endDate.toISOString() as unknown as Record<
-                    string,
-                    never
-                >,
+                startDate: values.startDate.toISOString(),
+                endDate: values.endDate.toISOString(),
             },
             params: {
                 path: {
