@@ -4,15 +4,8 @@ import Link from 'next/link';
 
 import { Plus } from 'lucide-react';
 
-import { RecentSales } from '@/components/dashboard/recent-sales';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { $api } from '@/libs/api';
 

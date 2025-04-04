@@ -79,24 +79,36 @@ export default function ProjectPage() {
         '/transaction/all'
     );
 
+    const { mutateAsync: buy } = $api.useMutation(
+        'post',
+        '/project/{id}/token/{tokenId}/buy'
+    );
     const handleBuy = async (tokenId: string, amount: number) => {
         if (!isConnected) {
             checkIfWalletIsInstalled();
             return;
         }
-        $api.useQuery('post', '/project/{id}/token/{tokenId}/buy', {
-            params: {
-                path: {
-                    id,
-                    tokenId,
-                },
-            },
+
+        const data = await buy({
             body: {
                 amount,
             },
+            params: {
+                path: {
+                    id: id,
+                    tokenId: tokenId,
+                },
+            },
         });
 
-        toast.success(`Buying ${amount} tokens of ID ${tokenId}`);
+        if (data.status !== 'ok') {
+            // ...
+            return;
+        }
+        // data.transactionHash
+        toast.success(
+            `Buying ${amount} tokens of ID ${data.data.transactionHash}`
+        );
     };
 
     const connectWallet = async () => {
@@ -284,8 +296,10 @@ export default function ProjectPage() {
                                             {projectTokenResult.data?.data.map(
                                                 (token) => (
                                                     <SelectItem
-                                                        key={token.id}
-                                                        value={token.id.toString()}
+                                                        key={token.tokenId}
+                                                        value={String(
+                                                            token.tokenId
+                                                        )}
                                                     >
                                                         Token {token.id} (
                                                         {/* {token.year}) -{' '}
@@ -303,7 +317,7 @@ export default function ProjectPage() {
                                                 Available{' '}
                                                 {projectTokenResult.data?.data.find(
                                                     (t) =>
-                                                        t.id ===
+                                                        String(t.tokenId) ==
                                                         selectedBuyToken
                                                 )?.amount || 0}{' '}
                                                 tokens
@@ -316,7 +330,9 @@ export default function ProjectPage() {
                                                     max={
                                                         projectTokenResult.data?.data.find(
                                                             (t) =>
-                                                                t.id.toString() ===
+                                                                String(
+                                                                    t.tokenId
+                                                                ) ==
                                                                 selectedBuyToken
                                                         )?.amount || 0
                                                     }
