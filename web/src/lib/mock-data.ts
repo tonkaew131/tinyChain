@@ -1,79 +1,54 @@
 export const projects = [
     {
-        "id": "P1006",
-        "type": "agriculture",
-        "name": "Wow",
-        "location": "Wongsawang 11",
-        "description": "test",
-        "developerId": "D1000",
-        "image": "",
-        "createdAt": "2025-03-27T18:49:27.725Z",
-        "updatedAt": "2025-03-27T18:49:27.725Z",
-        "developer": "TPI Polene Power Public Company Limited"
+        id: 'P1006',
+        type: 'agriculture',
+        name: 'Wow',
+        location: 'Wongsawang 11',
+        description: 'test',
+        developerId: 'D1000',
+        image: '',
+        createdAt: '2025-03-27T18:49:27.725Z',
+        updatedAt: '2025-03-27T18:49:27.725Z',
+        developer: 'TPI Polene Power Public Company Limited',
     },
 ] as const;
 
 export const tokens = [
     {
-        "id": "Md1fCrPNcmT1",
-        "tokenId": 2,
-        "projectId": "P1006",
-        "name": "ปลูกต้นไม้ 2567",
-        "amount": "500",
-        "unsoldAmount": "439",
-        "pricePerToken": "50",
-        "startDate": "2025-03-26T17:00:00.000Z",
-        "endDate": "2025-05-30T17:00:00.000Z",
-        "createdAt": "2025-03-27T18:52:42.268Z"
-
+        id: 'Md1fCrPNcmT1',
+        tokenId: 2,
+        projectId: 'P1006',
+        name: 'ปลูกต้นไม้ 2567',
+        amount: '500',
+        unsoldAmount: '439',
+        pricePerToken: '50',
+        startDate: '2025-03-26T17:00:00.000Z',
+        endDate: '2025-05-30T17:00:00.000Z',
+        createdAt: '2025-03-27T18:52:42.268Z',
     },
     {
-        "id": "NIQTJ22FEymX",
-        "tokenId": 3,
-        "projectId": "P1006",
-        "name": "MY NEW TOKEN",
-        "amount": "1500",
-        "unsoldAmount": "1500",
-        "pricePerToken": "500",
-        "startDate": "2025-04-03T17:00:00.000Z",
-        "endDate": "2025-04-03T00:00:00.000Z",
-        "createdAt": "2025-04-04T14:27:10.838Z"
-    }
-] ;
+        id: 'NIQTJ22FEymX',
+        tokenId: 3,
+        projectId: 'P1006',
+        name: 'MY NEW TOKEN',
+        amount: '1500',
+        unsoldAmount: '1500',
+        pricePerToken: '500',
+        startDate: '2025-04-03T17:00:00.000Z',
+        endDate: '2025-04-03T00:00:00.000Z',
+        createdAt: '2025-04-04T14:27:10.838Z',
+    },
+];
 
 export const activities = [
     {
-        id: '1',
-        eventType: 'mint' as const,
-        tokenId: 1,
-        projectId: 1,
-        amount: 1000,
-        sellerAddress: '0x1234...5678',
-        transactionHash: '0xabc...123',
-        blockTimestamp: new Date('2024-03-24T10:00:00Z'),
-    },
-    {
-        id: '2',
-        eventType: 'list' as const,
-        tokenId: 1,
-        projectId: 1,
-        amount: 500,
-        sellerAddress: '0x1234...5678',
-        priceFormatted: '25.00 THB',
-        transactionHash: '0xdef...456',
-        blockTimestamp: new Date('2024-03-24T11:00:00Z'),
-    },
-    {
-        id: '3',
-        eventType: 'sale' as const,
-        tokenId: 1,
-        projectId: 1,
-        amount: 200,
-        sellerAddress: '0x1234...5678',
-        buyerAddress: '0x9876...4321',
-        priceFormatted: '25.00 THB',
-        transactionHash: '0xghi...789',
-        blockTimestamp: new Date('2024-03-24T12:00:00Z'),
+        id: 'iyvoQ0jTwhL1TYNKRtvBdiEFa7HF5XmK9ryZDtCAgdjgOe8Xg79H9Z99Lpc4fbpZ',
+        txId: '0x3189858a45ebca7d4980c85f3cbdb3ba2fd4c0ba205760260e295c7dd67d35ac',
+        type: 'mint',
+        message:
+            '40 tokens listed by TPI Polene Power Public Company Limited for 50 THB',
+        userId: 'cAucYYwtVQTef4gtkLCwPUP0pycbR2K2',
+        createdAt: '2025-04-04T16:39:36.664Z',
     },
 ] as const;
 

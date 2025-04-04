@@ -623,7 +623,59 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    'application/json': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            tokenId: number | null;
+                            projectId: string;
+                            name: string;
+                            amount: string;
+                            unsoldAmount: string;
+                            pricePerToken: string;
+                            startDate: Record<string, never>;
+                            endDate: Record<string, never>;
+                            createdAt: Record<string, never>;
+                            transactionHash: string;
+                        };
+                    };
+                    'multipart/form-data': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            tokenId: number | null;
+                            projectId: string;
+                            name: string;
+                            amount: string;
+                            unsoldAmount: string;
+                            pricePerToken: string;
+                            startDate: Record<string, never>;
+                            endDate: Record<string, never>;
+                            createdAt: Record<string, never>;
+                            transactionHash: string;
+                        };
+                    };
+                    'text/plain': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            id: string;
+                            tokenId: number | null;
+                            projectId: string;
+                            name: string;
+                            amount: string;
+                            unsoldAmount: string;
+                            pricePerToken: string;
+                            startDate: Record<string, never>;
+                            endDate: Record<string, never>;
+                            createdAt: Record<string, never>;
+                            transactionHash: string;
+                        };
+                    };
+                };
             };
         };
     };

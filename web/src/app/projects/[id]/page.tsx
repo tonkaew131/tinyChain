@@ -6,7 +6,6 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { ArrowLeft, Calendar, Globe, Leaf, MapPin } from 'lucide-react';
-
 import { toast } from 'sonner';
 
 import {
@@ -28,7 +27,6 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-
 import {
     Select,
     SelectContent,
@@ -51,16 +49,12 @@ export interface TokenData {
 }
 
 interface ActivityEvent {
-    id: string; 
-    eventType: 'mint' | 'list' | 'sale' | 'cancel';
-    tokenId: number;
-    projectId: string;
-    amount: number;
-    sellerAddress: string;
-    buyerAddress?: string;
-    priceFormatted?: string;
-    transactionHash: string;
-    blockTimestamp: Date;
+    id: string;
+    txId: string;
+    type: string;
+    message: string;
+    userId: string;
+    createdAt: string;
 }
 
 interface Project {
@@ -77,23 +71,33 @@ interface Project {
 }
 
 export default function ProjectPage() {
-    const { id } = useParams<{id: string}>();
+    const { id } = useParams<{ id: string }>();
     const [isConnected, _setIsConnected] = useState(false);
     const [project, setProject] = useState<Project | null>(null);
     const [projectTokens, setProjectTokens] = useState<TokenData[]>([]);
     const [recentActivity, setRecentActivity] = useState<ActivityEvent[]>([]);
     const [buyAmount, setBuyAmount] = useState<number>(0);
     const [selectedBuyToken, setSelectedBuyToken] = useState<string>('');
-    const [, _setCombinedPriceData] = useState<
-        { [key: string]: number }[]
-    >([]);
+    const [, _setCombinedPriceData] = useState<{ [key: string]: number }[]>([]);
+    const checkIfWalletIsInstalled = () => {
+        const { ethereum } = window as WindowWithEthereum;
+        if (!ethereum) {
+            _setIsConnected(false);
+        }
+    };
 
     useEffect(() => {
         // Find project from mock data
         const projectId = id;
         const foundProject = projects.find((p) => p.id === projectId);
         if (foundProject) {
-            setProject({ ...foundProject, image: "http://localhost:65535/api/project/"+projectId+"/thumbnail" });
+            setProject({
+                ...foundProject,
+                image:
+                    'http://localhost:65535/api/project/' +
+                    projectId +
+                    '/thumbnail',
+            });
         }
         // Filter tokens for this project
         const projectTokens = tokens.filter((t) => t.projectId == projectId);
@@ -124,7 +128,6 @@ export default function ProjectPage() {
         //             b.blockTimestamp.getTime() - a.blockTimestamp.getTime()
         //     );
         // setRecentActivity(projectActivities);
-
 
         // Simulate real-time updates
         const interval = setInterval(() => {
@@ -192,7 +195,6 @@ export default function ProjectPage() {
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">
                                 {project.name}
-
                             </h1>
                             <div className="mt-2 flex items-center gap-2">
                                 <Badge>{project.type}</Badge>
@@ -220,23 +222,24 @@ export default function ProjectPage() {
                                     <div>
                                         <h3 className="flex items-center font-semibold">
                                             <Leaf className="mr-2 h-4 w-4 text-primary" />
-                                            Carbon Credits  
+                                            Carbon Credits
                                         </h3>
                                         <p>
                                             {tokens.map((e) => {
                                                 return (
                                                     <>
                                                         <div>
-                                                            <span>- {e.name}</span>
+                                                            <span>
+                                                                - {e.name}
+                                                            </span>
                                                             <span className="text-muted-foreground">
                                                                 {' '}
                                                                 {e.amount} tons
                                                             </span>
                                                         </div>
                                                     </>
-                                                )
+                                                );
                                             })}
-                                            
                                         </p>
                                     </div>
                                     <div>
@@ -256,7 +259,10 @@ export default function ProjectPage() {
                                                 return (
                                                     <>
                                                         <div key={token.id}>
-                                                            <span>- Name: {token.name}</span>
+                                                            <span>
+                                                                - Name:{' '}
+                                                                {token.name}
+                                                            </span>
                                                             <div className="text-muted-foreground">
                                                                 {' '}
                                                                 {new Date(
@@ -283,7 +289,7 @@ export default function ProjectPage() {
                                                             </div>
                                                         </div>
                                                     </>
-                                                )
+                                                );
                                             })}
                                         </p>
                                     </div>
@@ -331,7 +337,6 @@ export default function ProjectPage() {
                                                     Token {token.id} (
                                                     {/* {token.year}) -{' '}
                                                     {token.price.toLocaleString()}{' '} */}
-
                                                     THB
                                                 </SelectItem>
                                             ))}
@@ -373,7 +378,7 @@ export default function ProjectPage() {
                                                 />
                                             </div>
                                             <Button
-                                                className="w-full mt-3"
+                                                className="mt-3 w-full"
                                                 onClick={() =>
                                                     handleBuy(
                                                         parseInt(
@@ -411,13 +416,11 @@ export default function ProjectPage() {
                                 <div className="flex items-center gap-4">
                                     <div>
                                         <h3 className="font-semibold">
-                                           ID: {project.developerId}
+                                            ID: {project.developerId}
                                         </h3>
                                     </div>
                                 </div>
-                                <p className="text-sm">
-                                    {project.developer}
-                                </p>
+                                <p className="text-sm">{project.developer}</p>
                                 {/* <Button variant="outline" className="w-full">
                                     Contact Developer
                                 </Button> */}
@@ -446,31 +449,27 @@ export default function ProjectPage() {
                                             </div>
                                             <div className="collapse-content text-sm">
                                                 <p className="text-sm text-muted-foreground">
-                                                    {
-                                                        new Date(
-                                                            token.startDate
-                                                        ).toLocaleDateString(
-                                                            'en-US',    
-                                                            {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric',
-                                                            }
-                                                        )
-                                                    }
+                                                    {new Date(
+                                                        token.startDate
+                                                    ).toLocaleDateString(
+                                                        'en-US',
+                                                        {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric',
+                                                        }
+                                                    )}
                                                     {' - '}
-                                                    {
-                                                        new Date(
-                                                            token.endDate
-                                                        ).toLocaleDateString(
-                                                            'en-US',
-                                                            {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric',
-                                                            }
-                                                        )
-                                                    }
+                                                    {new Date(
+                                                        token.endDate
+                                                    ).toLocaleDateString(
+                                                        'en-US',
+                                                        {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric',
+                                                        }
+                                                    )}
                                                 </p>
                                                 <p className="text-sm">
                                                     Available: {token.amount}{' '}
@@ -478,13 +477,12 @@ export default function ProjectPage() {
                                                 </p>
                                                 <p className="text-sm font-medium">
                                                     Price:{' '}
-                                                    {Number(token.pricePerToken).toLocaleString(
-                                                        'en-US',
-                                                        {
-                                                            style: 'currency',
-                                                            currency: 'THB',
-                                                        }
-                                                    )}{' '}
+                                                    {Number(
+                                                        token.pricePerToken
+                                                    ).toLocaleString('en-US', {
+                                                        style: 'currency',
+                                                        currency: 'THB',
+                                                    })}{' '}
                                                     THB
                                                 </p>
                                             </div>

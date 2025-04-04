@@ -1,4 +1,8 @@
+'use client';
+
 import Link from 'next/link';
+
+import { useEffect, useState } from 'react';
 
 import { ExternalLink } from 'lucide-react';
 
@@ -48,6 +52,16 @@ export default function Customerashboard() {
         isLoading: false,
     };
 
+    const [activeTab, setActiveTab] = useState('overview');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const queryParams = new URLSearchParams(window.location.search);
+            const tab = queryParams.get('tab');
+            if (tab) setActiveTab(tab);
+        }
+    }, []);
+
     return (
         <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between">
@@ -58,7 +72,7 @@ export default function Customerashboard() {
                     <Link href="/projects">Browse Projects</Link>
                 </Button>
             </div>
-            <Tabs defaultValue="overview" className="space-y-4">
+            <Tabs defaultValue={'overview'} className="space-y-4">
                 <TabsList>
                     <TabsTrigger value="overview">Overview</TabsTrigger>
                     <TabsTrigger value="credits">My Credits</TabsTrigger>

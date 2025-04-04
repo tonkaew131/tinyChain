@@ -1,11 +1,12 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LeafyGreenIcon } from 'lucide-react';
+import { ExternalLinkIcon, LeafyGreenIcon } from 'lucide-react';
 import { z } from 'zod';
 
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +18,6 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog';
 import {
     Form,
@@ -74,8 +74,7 @@ export default function NewTokenForm(props: NewTokenFormProps) {
 
     return (
         <>
-            <Dialog open={isPending || data}>
-                <DialogTrigger>Open</DialogTrigger>
+            <Dialog open={isPending || !!data}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Minting new Token...</DialogTitle>
@@ -86,7 +85,7 @@ export default function NewTokenForm(props: NewTokenFormProps) {
                     </DialogHeader>
 
                     <div className="flex gap-6">
-                        <div className="relative h-48 w-48 overflow-hidden rounded-md">
+                        <div className="relative h-48 w-48 flex-shrink-0 overflow-hidden rounded-md">
                             <Image
                                 fill
                                 alt="Minting new token"
@@ -94,13 +93,41 @@ export default function NewTokenForm(props: NewTokenFormProps) {
                             />
                         </div>
 
-                        <div className="py-1">
+                        <div className="grid h-fit gap-1 py-1">
                             <div className="flex items-center gap-1">
                                 <p className="font-semibold">Status:</p>
-                                <Badge className="px-1" variant="yellow">
-                                    pending
-                                </Badge>
+                                {data ? (
+                                    <Badge className="px-1" variant="success">
+                                        success
+                                    </Badge>
+                                ) : (
+                                    <Badge className="px-1" variant="yellow">
+                                        pending
+                                    </Badge>
+                                )}
                             </div>
+
+                            <div className="flex gap-1">
+                                <p className="text-nowrap font-semibold">
+                                    Tx id:
+                                </p>
+                                <p className="text-wrap break-all font-mono">
+                                    {data?.data.transactionHash}
+                                </p>
+                            </div>
+
+                            {!isPending && (
+                                <Link
+                                    href={`https://sepolia.etherscan.io/tx/${data?.data.transactionHash}`}
+                                    target="_blank"
+                                    className="w-full"
+                                >
+                                    <Button className="w-full" size="sm">
+                                        View on Etherscan
+                                        <ExternalLinkIcon className="h-4 w-4" />
+                                    </Button>
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </DialogContent>

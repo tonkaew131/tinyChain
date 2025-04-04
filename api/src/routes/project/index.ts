@@ -220,10 +220,10 @@ export const ProjectRoute = new Elysia({
             });
 
             if (!session) {
-                return error(401);
+                throw new Error('Unauthorized');
             }
             if (!session.user.developerId) {
-                return error(403, "You're not a developer");
+                throw new Error("You're not a developer");
             }
 
             const [developer] = await db
@@ -233,7 +233,7 @@ export const ProjectRoute = new Elysia({
                     eq(schema.projectDevelopers.id, session.user.developerId)
                 );
             if (!developer) {
-                return error(403, "You're not a developer");
+                throw new Error("You're not a developer");
             }
 
             const [project] = await db
@@ -241,7 +241,7 @@ export const ProjectRoute = new Elysia({
                 .from(schema.projects)
                 .where(eq(schema.projects.id, context.params.id));
             if (!project || project.developerId !== developer.id) {
-                return error(403, 'You do not have permission to access');
+                throw new Error('You do not have permission to access');
             }
 
             const {
@@ -284,7 +284,11 @@ export const ProjectRoute = new Elysia({
                     userId: session.user.id,
                 });
 
-                return { ...token, transactionHash: bcTx.hash, bcTx: bcTx };
+                return {
+                    ...token,
+                    transactionHash: bcTx.hash as string,
+                    // bcTx: bcTx
+                };
             });
 
             return {
@@ -308,6 +312,14 @@ export const ProjectRoute = new Elysia({
                 ]).properties,
                 startDate: t.String(),
                 endDate: t.String(),
+            }),
+            response: t.Object({
+                status: t.Literal('ok'),
+                data: t.Object({
+                    ...projectTokenSelectSchema.properties,
+                    transactionHash: t.String(),
+                    // bcTx: t.Any(),
+                }),
             }),
         }
     )
