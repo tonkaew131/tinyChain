@@ -97,7 +97,7 @@ interface Project {
 
 export default function ProjectPage() {
     const { id } = useParams();
-    const [isConnected, setIsConnected] = useState(false);
+    const [isConnected, _setIsConnected] = useState(false);
     const [project, setProject] = useState<Project | null>(null);
     const [projectTokens, setProjectTokens] = useState<TokenData[]>([]);
     const [recentActivity, setRecentActivity] = useState<ActivityEvent[]>([]);
@@ -106,7 +106,7 @@ export default function ProjectPage() {
         'all'
     );
     const [selectedBuyToken, setSelectedBuyToken] = useState<string>('');
-    const [combinedPriceData, setCombinedPriceData] = useState<
+    const [combinedPriceData, _setCombinedPriceData] = useState<
         { [key: string]: number }[]
     >([]);
     const [isBuyDialogOpen, setIsBuyDialogOpen] = useState(false);
@@ -122,10 +122,7 @@ export default function ProjectPage() {
         const projectId = Number(id);
         const foundProject = projects.find((p) => p.id === projectId);
         if (foundProject) {
-            setProject({
-                ...foundProject,
-                images: [...foundProject.images],
-            });
+            setProject({ ...foundProject, images: [...foundProject.images] });
         }
 
         // Filter tokens for this project
@@ -133,7 +130,7 @@ export default function ProjectPage() {
         setProjectTokens(projectTokens);
 
         // Combine price history for all tokens
-        const tokenIds = projectTokens.map((t) => t.id);
+        const _tokenIds = projectTokens.map((t) => t.id);
         // const dates = tokenPriceHistory[tokenIds[0]].map((d) => d.date);
         // const combined = dates.map((date, i) => {
         //     const dataPoint: { [key: string]: number } = {

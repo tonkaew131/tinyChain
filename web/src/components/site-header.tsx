@@ -4,7 +4,8 @@ import { MainNav } from '@/components/main-nav';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Button } from '@/components/ui/button';
 import { UserNav } from '@/components/user-nav';
-import { WalletIcon } from '@/components/wallet';
+
+// import { WalletIcon } from '@/components/wallet';
 
 export function SiteHeader() {
     return (

@@ -30,32 +30,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
 const projectFormSchema = z.object({
-    title: z.string().min(5, {
-        message: 'Title must be at least 5 characters.',
-    }),
-    description: z.string().min(50, {
-        message: 'Description must be at least 50 characters.',
-    }),
-    location: z.string().min(2, {
-        message: 'Location is required.',
-    }),
-    projectType: z.string({
-        required_error: 'Please select a project type.',
-    }),
-    methodology: z.string({
-        required_error: 'Please select a methodology.',
-    }),
+    title: z
+        .string()
+        .min(5, { message: 'Title must be at least 5 characters.' }),
+    description: z
+        .string()
+        .min(50, { message: 'Description must be at least 50 characters.' }),
+    location: z.string().min(2, { message: 'Location is required.' }),
+    projectType: z.string({ required_error: 'Please select a project type.' }),
+    methodology: z.string({ required_error: 'Please select a methodology.' }),
     certification: z.string({
         required_error: 'Please select a certification standard.',
     }),
     startDate: z.string(),
     endDate: z.string(),
-    carbonCredits: z.string().min(1, {
-        message: 'Expected carbon credits is required.',
-    }),
-    price: z.string().min(1, {
-        message: 'Price per credit is required.',
-    }),
+    carbonCredits: z
+        .string()
+        .min(1, { message: 'Expected carbon credits is required.' }),
+    price: z.string().min(1, { message: 'Price per credit is required.' }),
     practices: z.string().min(20, {
         message:
             'Sustainable practices description must be at least 20 characters.',
@@ -332,8 +324,9 @@ export function ProjectForm() {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Detail the specific practices you're
-                                        implementing to reduce carbon emissions.
+                                        Detail the specific practices
+                                        you&apos;re implementing to reduce
+                                        carbon emissions.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -448,8 +441,8 @@ export function ProjectForm() {
                                         </SelectContent>
                                     </Select>
                                     <FormDescription>
-                                        The certification standard you're using
-                                        or planning to use.
+                                        The certification standard you&apos;re
+                                        using or planning to use.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>

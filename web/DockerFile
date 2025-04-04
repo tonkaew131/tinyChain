@@ -1,0 +1,80 @@
+# syntax=docker.io/docker/dockerfile:1
+FROM oven/bun:latest AS base
+
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ARG PORT
+ENV PORT=${PORT}
+
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+# RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Copy root package files and workspace package files
+COPY package.json package.json
+COPY bun.lock bun.lock
+
+COPY /api/package.json ./api/package.json
+COPY /web/package.json ./web/package.json
+COPY /contracts/package.json ./contracts/package.json
+
+# Install dependencies based on the preferred package manager
+RUN bun install
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+
+# Copy node modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+# COPY --from=deps /app/api/node_modules ./api/node_modules
+# COPY --from=deps /app/web/node_modules ./web/node_modules
+# COPY --from=deps /app/contracts/node_modules ./contracts/node_modules
+
+# Copy all project files
+COPY . .
+
+# Set working directory to web (Next.js application)
+WORKDIR /app/web
+
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+# ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build the Next.js app
+RUN bun add sharp
+RUN bun run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Set working directory to web (Next.js application)
+WORKDIR /app/web
+
+# Copy public directory
+COPY --from=builder /app/web/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./.next/static
+
+# Set the correct user
+USER nextjs
+
+# Start the Next.js application
+ENV HOSTNAME="0.0.0.0"
+CMD ["node", "server.js"]
+EXPOSE ${PORT}

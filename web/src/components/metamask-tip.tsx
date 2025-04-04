@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import { useEffect, useState } from 'react';
 
-import { Wallet } from 'lucide-react';
+// import { Wallet } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +16,10 @@ import {
 
 import metamask from '@/../public/MetaMask-icon-fox.svg';
 
+type WindowWithEthereum = {
+    ethereum?: { request: (args: { method: string }) => Promise<string[]> };
+};
+
 export function MetamaskTip() {
     const [account, setAccount] = useState<string | null>(null);
     const [isInstalled, setIsInstalled] = useState(true);
@@ -25,7 +29,7 @@ export function MetamaskTip() {
     }, []);
 
     const checkIfWalletIsInstalled = () => {
-        const { ethereum } = window as any;
+        const { ethereum } = window as WindowWithEthereum;
         if (!ethereum) {
             setIsInstalled(false);
         }
@@ -33,7 +37,7 @@ export function MetamaskTip() {
 
     const connectWallet = async () => {
         try {
-            const { ethereum } = window as any;
+            const { ethereum } = window as WindowWithEthereum;
             if (!ethereum) {
                 alert('Please install MetaMask!');
                 return;

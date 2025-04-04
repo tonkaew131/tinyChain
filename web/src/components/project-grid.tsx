@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
-import { fetchProject, fetchProjectThumbnail } from '@/action/project';
+import { fetchProject } from '@/action/project';
 
 interface Project {
     id: string;
@@ -112,13 +112,13 @@ export function ProjectGrid() {
 
     const [projectData, setProjectData] = useState<Project[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [_error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
         const loadProjects = async () => {
             try {
                 setIsLoading(true);
-                const projectResponse = await fetchProject().then((res) =>
+                const _projectResponse = await fetchProject().then((res) =>
                     setProjectData(res.data)
                 );
 

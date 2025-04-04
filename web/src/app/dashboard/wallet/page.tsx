@@ -35,7 +35,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { updateWallet } from '@/action/user';
 
 export default function WalletPage() {
-    const { useSession, signOut } = authClient;
+    const { useSession, signOut: _ } = authClient;
     const { data } = useSession();
     const [depositType, setDepositType] = useState<string>('qr');
     const [depositAmount, setDepositAmount] = useState<string>('');
