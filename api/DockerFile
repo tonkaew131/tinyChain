@@ -34,6 +34,7 @@ FROM gcr.io/distroless/base
 WORKDIR /app
 
 COPY --from=build /app/api/server ./server
+RUN chmod +x ./server
 COPY --from=build /app/api/src/contracts/artifacts ./src/contracts/artifacts
 
 # Environment variables
