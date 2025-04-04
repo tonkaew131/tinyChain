@@ -6,10 +6,13 @@ import { ChevronRight, Globe, Sprout } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { BorderBeam } from './magicui/border-beam';
+import { Particles } from './magicui/particles';
 
 export function HeroSection() {
     return (
         <section className="relative w-full overflow-hidden bg-gradient-to-b from-background via-background/95 to-muted py-16 md:py-24 lg:py-32 xl:py-48">
+            <Particles color="#22c55e" className="absolute inset-0 z-50" />
+
             {/* Animated background elements */}
             <div className="absolute inset-0 -z-10">
                 <div className="bg-grid-pattern absolute inset-0 opacity-5"></div>
