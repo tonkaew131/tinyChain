@@ -30,14 +30,10 @@ export const useSignUp = () => {
     });
 };
 
-export const useChangePassword = () => {
+export const useUpdateProfile = () => {
     return useMutation({
-        mutationFn: (data: { currentPassword: string; newPassword: string }) =>
-            authClient.changePassword({
-                currentPassword: data.currentPassword,
-                newPassword: data.newPassword,
-                revokeOtherSessions: true,
-            }),
+        mutationFn: (data: Parameters<typeof authClient.updateUser>[0]) =>
+            authClient.updateUser(data),
     });
 };
 

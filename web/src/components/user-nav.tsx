@@ -21,7 +21,6 @@ import {
 import { WalletIcon } from '@/components/wallet';
 
 export function UserNav() {
-    // This would be replaced with actual auth state
     const { useSession, signOut } = authClient;
     const { data } = useSession();
 
@@ -37,8 +36,6 @@ export function UserNav() {
             </div>
         );
     }
-
-    console.log(data);
 
     return (
         <>

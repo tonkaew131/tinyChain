@@ -4,6 +4,8 @@ import Image from 'next/image';
 
 import { useEffect, useState } from 'react';
 
+import { authClient, useUpdateProfile } from '@/lib/auth-client';
+
 // import { Wallet } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -21,7 +23,10 @@ type WindowWithEthereum = {
 };
 
 export function MetamaskTip() {
-    const [account, setAccount] = useState<string | null>(null);
+    const { useSession } = authClient;
+    const { data } = useSession();
+    const { mutate } = useUpdateProfile();
+
     const [isInstalled, setIsInstalled] = useState(true);
 
     useEffect(() => {
@@ -46,15 +51,21 @@ export function MetamaskTip() {
             const accounts = await ethereum.request({
                 method: 'eth_requestAccounts',
             });
-            setAccount(accounts[0]);
+            mutate({
+                wallet: accounts[0],
+            });
         } catch (error) {
             console.error('Error connecting to MetaMask:', error);
         }
     };
 
     const disconnectWallet = () => {
-        setAccount(null);
+        mutate({
+            wallet: null,
+        });
     };
+
+    const account = data?.user?.wallet;
 
     return (
         <DropdownMenu>

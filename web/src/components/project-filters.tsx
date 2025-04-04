@@ -54,6 +54,7 @@ export function ProjectFilters() {
                         <AccordionContent>
                             <div className="space-y-4">
                                 <Slider
+                                    className="pt-2"
                                     defaultValue={priceRange}
                                     min={5}
                                     max={100}
