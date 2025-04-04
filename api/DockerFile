@@ -26,6 +26,9 @@ RUN bun build \
 	--outfile server \
 	./src/app.ts
 
+RUN ls -la
+RUN pwd
+
 FROM gcr.io/distroless/base
 
 WORKDIR /app
