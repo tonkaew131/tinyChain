@@ -38,6 +38,13 @@ export const useUpdateProfile = () => {
     });
 };
 
+export const useChangePassword = () => {
+    return useMutation({
+        mutationFn: (data: { currentPassword: string; newPassword: string }) =>
+            authClient.changePassword(data),
+    });
+};
+
 export const useAddWallet = () => {
     return;
 };
