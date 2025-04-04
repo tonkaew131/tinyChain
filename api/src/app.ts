@@ -7,6 +7,7 @@ import { HelloWorldRoute } from './routes/hello-world';
 import { PaymentRoute } from './routes/payment';
 import { ProjectRoute } from './routes/project';
 import { TransactionRoute } from './routes/transaction';
+import { UserRoute } from './routes/user';
 import { auth } from './utils/auth';
 import { cron } from '@elysiajs/cron';
 import swagger from '@elysiajs/swagger';
@@ -62,6 +63,7 @@ const app = new Elysia()
     .use(PaymentRoute)
     .use(AdminRoute)
     .use(TransactionRoute)
+    .use(UserRoute)
     .use(HelloWorldRoute)
     .get('/', () => 'Hello Elysia')
     .listen(process.env.PORT || 3001);

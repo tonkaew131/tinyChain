@@ -208,6 +208,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    '/user/wallet': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations['getUserWallet'];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    '/user/stats': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations['getUserStats'];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     '/': {
         parameters: {
             query?: never;
@@ -982,6 +1014,123 @@ export interface operations {
                         userId: string;
                         createdAt: Record<string, never>;
                     }[];
+                };
+            };
+        };
+    };
+    getUserWallet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            balance: number;
+                        };
+                    };
+                    'multipart/form-data': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            balance: number;
+                        };
+                    };
+                    'text/plain': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            balance: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getUserStats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            totalCarbonOffset: number;
+                            activeCredits: number;
+                            retiredCredits: number;
+                            projectSupport: number;
+                            tokens: {
+                                tokenId: string;
+                                projectId: string;
+                                userId: string;
+                                amount: number;
+                                boughtAt:
+                                    | Record<string, never>
+                                    | string
+                                    | number;
+                            }[];
+                        };
+                    };
+                    'multipart/form-data': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            totalCarbonOffset: number;
+                            activeCredits: number;
+                            retiredCredits: number;
+                            projectSupport: number;
+                            tokens: {
+                                tokenId: string;
+                                projectId: string;
+                                userId: string;
+                                amount: number;
+                                boughtAt:
+                                    | Record<string, never>
+                                    | string
+                                    | number;
+                            }[];
+                        };
+                    };
+                    'text/plain': {
+                        /** @constant */
+                        status: 'ok';
+                        data: {
+                            totalCarbonOffset: number;
+                            activeCredits: number;
+                            retiredCredits: number;
+                            projectSupport: number;
+                            tokens: {
+                                tokenId: string;
+                                projectId: string;
+                                userId: string;
+                                amount: number;
+                                boughtAt:
+                                    | Record<string, never>
+                                    | string
+                                    | number;
+                            }[];
+                        };
+                    };
                 };
             };
         };

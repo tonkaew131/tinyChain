@@ -5,14 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 
 interface ActivityEvent {
-    eventType: 'mint' | 'list' | 'sale' | 'cancel';
-    tokenId: number;
-    amount: number;
-    sellerAddress: string;
-    buyerAddress?: string;
-    priceFormatted?: string;
-    transactionHash: string;
-    blockTimestamp: Date;
+    id: string;
+    txId: string;
+    type: 'mint' | 'buy' | 'burn' | 'sell';
+    message: string;
+    userId: string;
+    createdAt: Record<string, never>;
 }
 
 interface ActivityItemProps {
@@ -20,40 +18,34 @@ interface ActivityItemProps {
 }
 
 export function ActivityItem({ event }: ActivityItemProps) {
-    const getEventLabel = (type: ActivityEvent['eventType']) => {
+    const getEventLabel = (type: ActivityEvent['type']) => {
         switch (type) {
             case 'mint':
                 return { text: 'Minted', variant: 'default' as const };
-            case 'list':
+            case 'buy':
                 return { text: 'Listed', variant: 'secondary' as const };
-            case 'sale':
+            case 'sell':
                 return { text: 'Sold', variant: 'outline' as const };
-            case 'cancel':
+            case 'burn':
                 return { text: 'Cancelled', variant: 'destructive' as const };
         }
     };
 
     const getEventDescription = (event: ActivityEvent) => {
-        const {
-            eventType,
-            amount,
-            sellerAddress,
-            buyerAddress,
-            priceFormatted,
-        } = event;
-        switch (eventType) {
+        const { type, txId, message } = event;
+        switch (type) {
             case 'mint':
-                return `${amount} tokens minted by ${sellerAddress}`;
-            case 'list':
-                return `${amount} tokens listed by ${sellerAddress} for ${priceFormatted}`;
-            case 'sale':
-                return `${amount} tokens sold by ${sellerAddress} to ${buyerAddress} for ${priceFormatted}`;
-            case 'cancel':
-                return `Listing cancelled by ${sellerAddress}`;
+                return message;
+            case 'buy':
+                return message;
+            case 'sell':
+                return message;
+            case 'burn':
+                return `Listing cancelled by ${txId}`;
         }
     };
 
-    const label = getEventLabel(event.eventType);
+    const label = getEventLabel(event.type);
 
     return (
         <Card className="p-4">
@@ -62,15 +54,18 @@ export function ActivityItem({ event }: ActivityItemProps) {
                     <div className="flex items-center gap-2">
                         <Badge variant={label.variant}>{label.text}</Badge>
                         <span className="text-sm text-muted-foreground">
-                            {formatDistanceToNow(event.blockTimestamp, {
-                                addSuffix: true,
-                            })}
+                            {formatDistanceToNow(
+                                event.createdAt as unknown as Date,
+                                {
+                                    addSuffix: true,
+                                }
+                            )}
                         </span>
                     </div>
                     <p>{getEventDescription(event)}</p>
                 </div>
                 <a
-                    href={`https://sepolia.etherscan.io/tx/${event.transactionHash}`}
+                    href={`https://sepolia.etherscan.io/tx/${event.txId}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-muted-foreground hover:text-primary"

@@ -9,38 +9,37 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { $api } from '@/libs/api';
+
 export default function CustomerDashboard() {
-    // const {
-    //     data: stats,
-    //     isError,
-    //     isLoading,
-    // } = $api.useQuery('get', '/user/stats');
-    const stats = {
-        data: {
-            totalCarbonOffset: 2500,
-            activeCredits: 1200,
-            retiredCredits: 1300,
-            projectsSupported: 8,
-            tokens: [
-                {
-                    tokenId: 1,
-                    projectId: 'P1006',
-                    userId: '123',
-                    amount: 1000,
-                    boughtAt: '2023-01-01',
-                },
-                {
-                    tokenId: 2,
-                    projectId: 'P1007',
-                    userId: '123',
-                    amount: 1000,
-                    boughtAt: '2023-01-01',
-                },
-            ],
-        },
-        isError: false,
-        isLoading: false,
-    };
+    const { data: stats } = $api.useQuery('get', '/user/stats');
+
+    // const stats = {
+    //     data: {
+    //         totalCarbonOffset: 2500,
+    //         activeCredits: 1200,
+    //         retiredCredits: 1300,
+    //         projectsSupported: 8,
+    //         tokens: [
+    //             {
+    //                 tokenId: 1,
+    //                 projectId: 'P1006',
+    //                 userId: '123',
+    //                 amount: 1000,
+    //                 boughtAt: '2023-01-01',
+    //             },
+    //             {
+    //                 tokenId: 2,
+    //                 projectId: 'P1007',
+    //                 userId: '123',
+    //                 amount: 1000,
+    //                 boughtAt: '2023-01-01',
+    //             },
+    //         ],
+    //     },
+    //     isError: false,
+    //     isLoading: false,
+    // };
 
     const searchParams = useSearchParams();
     const tab = searchParams.get('tab') || 'overview';
@@ -83,7 +82,7 @@ export default function CustomerDashboard() {
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">
-                                    {stats.data?.totalCarbonOffset}
+                                    {stats?.data?.totalCarbonOffset || 0}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
                                     tons CO₂e offset
@@ -112,7 +111,7 @@ export default function CustomerDashboard() {
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">
-                                    {stats.data?.activeCredits}
+                                    {stats?.data?.activeCredits || 0}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
                                     Available credits
@@ -146,7 +145,7 @@ export default function CustomerDashboard() {
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">
-                                    {stats.data?.retiredCredits}
+                                    {stats?.data?.retiredCredits || 0}
                                 </div>
                                 <p className="text-xs text-muted-foreground"></p>
                             </CardContent>
@@ -171,7 +170,7 @@ export default function CustomerDashboard() {
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">
-                                    {stats.data?.projectsSupported}
+                                    {stats?.data?.projectSupported || 0}
                                 </div>
                                 <p className="text-xs text-muted-foreground"></p>
                             </CardContent>
@@ -247,7 +246,7 @@ export default function CustomerDashboard() {
                 </TabsContent>
                 <TabsContent value="credits" className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        {stats.data?.tokens.map((token) => (
+                        {stats?.data?.tokens.map((token) => (
                             <Card key={token.tokenId}>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">
@@ -267,7 +266,7 @@ export default function CustomerDashboard() {
                                         {token.amount}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        {token.boughtAt}
+                                        {token.boughtAt.toLocaleString()}
                                     </p>
                                     <p className="text-xs text-muted-foreground">
                                         {token.tokenId}

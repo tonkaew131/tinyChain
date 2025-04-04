@@ -43,12 +43,12 @@ export function DashboardNav() {
             icon: FileText,
             role: 'farmer',
         },
-        {
-            title: 'My Credits',
-            href: '/dashboard/customer?tab=credits',
-            icon: Leaf,
-            role: 'customer',
-        },
+        // {
+        //     title: 'My Credits',
+        //     href: '/dashboard/customer?tab=credits',
+        //     icon: Leaf,
+        //     role: 'customer',
+        // },
         {
             title: 'My Wallet',
             href: '/dashboard/wallet',

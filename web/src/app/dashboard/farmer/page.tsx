@@ -147,7 +147,7 @@ export default function FarmerDashboard() {
                                 <Overview />
                             </CardContent>
                         </Card> */}
-                <Card className="col-span-full">
+                {/* <Card className="col-span-full">
                     <CardHeader>
                         <CardTitle>Recent Sales</CardTitle>
                         <CardDescription>
@@ -157,7 +157,7 @@ export default function FarmerDashboard() {
                     <CardContent>
                         <RecentSales />
                     </CardContent>
-                </Card>
+                </Card> */}
             </div>
         </div>
     );
