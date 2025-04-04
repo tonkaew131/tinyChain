@@ -5,7 +5,10 @@ import { createAuthClient } from 'better-auth/react';
 
 export const authClient = createAuthClient({
     // Use env instead
-    baseURL: 'http://localhost:65535/api/auth',
+    baseURL:
+        process.env.NODE_ENV === 'production'
+            ? 'https://akaracarbon.athichal.com/api/auth'
+            : 'http://localhost:65535/api/auth',
     plugins: [inferAdditionalFields<Auth>(), adminClient()],
 });
 
