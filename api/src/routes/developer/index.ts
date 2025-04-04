@@ -1,6 +1,6 @@
 import Elysia, { error, t } from 'elysia';
 
-import { eq, sum } from 'drizzle-orm';
+import { and, count, eq, gt, sql, sum } from 'drizzle-orm';
 
 import { db } from '@api/db';
 import * as schema from '@api/db/schema';
@@ -31,6 +31,10 @@ export const DeveloperRoute = new Elysia({
             const [stats] = await db
                 .select({
                     totalCarbonOffset: sum(schema.projectTokens.amount),
+                    activeCredits: sum(schema.projectTokens.unsoldAmount),
+                    revenue: sum(
+                        sql`CAST(${schema.projectTokens.amount} AS FLOAT) * ${schema.projectTokens.pricePerToken}`
+                    ),
                 })
                 .from(schema.userTokens)
                 .leftJoin(
@@ -38,6 +42,30 @@ export const DeveloperRoute = new Elysia({
                     eq(schema.projectTokens.tokenId, schema.userTokens.tokenId)
                 )
                 .where(eq(schema.userTokens.userId, session.user.id));
+            const [burn] = await db
+                .select({
+                    retiredCredits: sum(schema.projectTokens.amount),
+                })
+                .from(schema.userTokens)
+                .leftJoin(
+                    schema.projectTokens,
+                    eq(schema.projectTokens.tokenId, schema.userTokens.tokenId)
+                )
+                .where(
+                    and(
+                        eq(schema.userTokens.userId, session.user.id),
+                        gt(schema.projectTokens.endDate, new Date())
+                    )
+                );
+            const [project] = await db
+                .select({
+                    totalProjects: count(schema.projects.id),
+                })
+                .from(schema.projects)
+                .leftJoin(
+                    schema.users,
+                    eq(schema.users.developerId, schema.projects.developerId)
+                );
 
             return {
                 status: 'ok' as const,
@@ -45,9 +73,10 @@ export const DeveloperRoute = new Elysia({
                     totalCarbonOffset: parseFloat(
                         stats.totalCarbonOffset ?? '0'
                     ),
-                    activeCredits: 0,
-                    retiredCredits: 0,
-                    totalProjects: 0,
+                    activeCredits: parseFloat(stats.activeCredits ?? '0'),
+                    retiredCredits: parseFloat(burn.retiredCredits ?? '0'),
+                    totalProjects: project.totalProjects,
+                    revenue: parseFloat(stats.revenue ?? '0'),
                 },
             };
         },
@@ -60,6 +89,7 @@ export const DeveloperRoute = new Elysia({
                         activeCredits: t.Number(),
                         retiredCredits: t.Number(),
                         totalProjects: t.Number(),
+                        revenue: t.Number(),
                     }),
                 }),
             },

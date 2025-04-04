@@ -9,4 +9,14 @@ const updateWallet = async (amount: number) => {
     return await response.json();
 };
 
-export { updateWallet };
+const developerFarmerStats = async () => {
+    const response = await fetch('/api/developer/stats', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    return await response.json();
+};
+
+export { updateWallet, developerFarmerStats };

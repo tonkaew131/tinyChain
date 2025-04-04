@@ -10,6 +10,7 @@
         "db:seed": "tsx drizzle/seed/seed.ts"
     },
     "dependencies": {
+        "@elysiajs/cron": "^1.2.0",
         "@elysiajs/swagger": "^1.2.0",
         "better-auth": "^1.2.4",
         "drizzle-orm": "^0.41.0",

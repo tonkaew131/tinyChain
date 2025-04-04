@@ -1,0 +1,2 @@
+CREATE TYPE "public"."project_type" AS ENUM('agriculture', 'forestry', 'livestock', 'renewable', 'conservation');--> statement-breakpoint
+ALTER TABLE "project" ADD COLUMN "type" "project_type" DEFAULT 'agriculture' NOT NULL;

@@ -165,6 +165,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    '/admin/destroy-expired-tokens': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations['postAdminDestroy-expired-tokens'];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     '/': {
         parameters: {
             query?: never;
@@ -229,13 +245,21 @@ export interface operations {
                         status: 'ok';
                         data: {
                             id: string;
-                            developerId: string;
-                            location: string;
+                            type:
+                                | 'agriculture'
+                                | 'forestry'
+                                | 'livestock'
+                                | 'renewable'
+                                | 'conservation';
                             name: string;
+                            location: string;
                             description: string;
+                            developerId: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
                             developer: string;
+                            soldTokens: number;
+                            unsoldTokens: number;
                         }[];
                     };
                     'multipart/form-data': {
@@ -243,13 +267,21 @@ export interface operations {
                         status: 'ok';
                         data: {
                             id: string;
-                            developerId: string;
-                            location: string;
+                            type:
+                                | 'agriculture'
+                                | 'forestry'
+                                | 'livestock'
+                                | 'renewable'
+                                | 'conservation';
                             name: string;
+                            location: string;
                             description: string;
+                            developerId: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
                             developer: string;
+                            soldTokens: number;
+                            unsoldTokens: number;
                         }[];
                     };
                     'text/plain': {
@@ -257,13 +289,21 @@ export interface operations {
                         status: 'ok';
                         data: {
                             id: string;
-                            developerId: string;
-                            location: string;
+                            type:
+                                | 'agriculture'
+                                | 'forestry'
+                                | 'livestock'
+                                | 'renewable'
+                                | 'conservation';
                             name: string;
+                            location: string;
                             description: string;
+                            developerId: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
                             developer: string;
+                            soldTokens: number;
+                            unsoldTokens: number;
                         }[];
                     };
                 };
@@ -280,8 +320,14 @@ export interface operations {
         requestBody: {
             content: {
                 'application/json': {
-                    location: string;
+                    type?:
+                        | 'agriculture'
+                        | 'forestry'
+                        | 'livestock'
+                        | 'renewable'
+                        | 'conservation';
                     name: string;
+                    location: string;
                     description?: string;
                     /**
                      * Format: binary
@@ -290,8 +336,14 @@ export interface operations {
                     thumbnail: string;
                 };
                 'multipart/form-data': {
-                    location: string;
+                    type?:
+                        | 'agriculture'
+                        | 'forestry'
+                        | 'livestock'
+                        | 'renewable'
+                        | 'conservation';
                     name: string;
+                    location: string;
                     description?: string;
                     /**
                      * Format: binary
@@ -300,8 +352,14 @@ export interface operations {
                     thumbnail: string;
                 };
                 'text/plain': {
-                    location: string;
+                    type?:
+                        | 'agriculture'
+                        | 'forestry'
+                        | 'livestock'
+                        | 'renewable'
+                        | 'conservation';
                     name: string;
+                    location: string;
                     description?: string;
                     /**
                      * Format: binary
@@ -341,10 +399,16 @@ export interface operations {
                         status: 'ok';
                         data: {
                             id: string;
-                            developerId: string;
-                            location: string;
+                            type:
+                                | 'agriculture'
+                                | 'forestry'
+                                | 'livestock'
+                                | 'renewable'
+                                | 'conservation';
                             name: string;
+                            location: string;
                             description: string;
+                            developerId: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
                         };
@@ -354,10 +418,16 @@ export interface operations {
                         status: 'ok';
                         data: {
                             id: string;
-                            developerId: string;
-                            location: string;
+                            type:
+                                | 'agriculture'
+                                | 'forestry'
+                                | 'livestock'
+                                | 'renewable'
+                                | 'conservation';
                             name: string;
+                            location: string;
                             description: string;
+                            developerId: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
                         };
@@ -367,10 +437,16 @@ export interface operations {
                         status: 'ok';
                         data: {
                             id: string;
-                            developerId: string;
-                            location: string;
+                            type:
+                                | 'agriculture'
+                                | 'forestry'
+                                | 'livestock'
+                                | 'renewable'
+                                | 'conservation';
                             name: string;
+                            location: string;
                             description: string;
+                            developerId: string;
                             createdAt: Record<string, never>;
                             updatedAt: Record<string, never>;
                         };
@@ -425,8 +501,8 @@ export interface operations {
                             amount: string;
                             unsoldAmount: string;
                             pricePerToken: string;
-                            startDate: string;
-                            endDate: string;
+                            startDate: Record<string, never>;
+                            endDate: Record<string, never>;
                             createdAt: Record<string, never>;
                         }[];
                     };
@@ -441,8 +517,8 @@ export interface operations {
                             amount: string;
                             unsoldAmount: string;
                             pricePerToken: string;
-                            startDate: string;
-                            endDate: string;
+                            startDate: Record<string, never>;
+                            endDate: Record<string, never>;
                             createdAt: Record<string, never>;
                         }[];
                     };
@@ -457,8 +533,8 @@ export interface operations {
                             amount: string;
                             unsoldAmount: string;
                             pricePerToken: string;
-                            startDate: string;
-                            endDate: string;
+                            startDate: Record<string, never>;
+                            endDate: Record<string, never>;
                             createdAt: Record<string, never>;
                         }[];
                     };
@@ -481,22 +557,22 @@ export interface operations {
                     name: string;
                     amount: string;
                     pricePerToken?: string;
-                    startDate: string;
-                    endDate: string;
+                    startDate: Record<string, never>;
+                    endDate: Record<string, never>;
                 };
                 'multipart/form-data': {
                     name: string;
                     amount: string;
                     pricePerToken?: string;
-                    startDate: string;
-                    endDate: string;
+                    startDate: Record<string, never>;
+                    endDate: Record<string, never>;
                 };
                 'text/plain': {
                     name: string;
                     amount: string;
                     pricePerToken?: string;
-                    startDate: string;
-                    endDate: string;
+                    startDate: Record<string, never>;
+                    endDate: Record<string, never>;
                 };
             };
         };
@@ -602,6 +678,7 @@ export interface operations {
                             activeCredits: number;
                             retiredCredits: number;
                             totalProjects: number;
+                            revenue: number;
                         };
                     };
                     'multipart/form-data': {
@@ -612,6 +689,7 @@ export interface operations {
                             activeCredits: number;
                             retiredCredits: number;
                             totalProjects: number;
+                            revenue: number;
                         };
                     };
                     'text/plain': {
@@ -622,6 +700,7 @@ export interface operations {
                             activeCredits: number;
                             retiredCredits: number;
                             totalProjects: number;
+                            revenue: number;
                         };
                     };
                 };
@@ -709,6 +788,23 @@ export interface operations {
                         status: 'ok';
                     };
                 };
+            };
+        };
+    };
+    'postAdminDestroy-expired-tokens': {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

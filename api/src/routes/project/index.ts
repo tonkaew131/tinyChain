@@ -3,7 +3,7 @@ import Elysia, { error, t } from 'elysia';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { and, eq, getTableColumns } from 'drizzle-orm';
+import { and, eq, getTableColumns, sql, sum } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-typebox';
 
 import { akaraCarbonContract } from '@api/contracts/AkaraCarbon';
@@ -36,13 +36,20 @@ export const ProjectRoute = new Elysia({
             const projects = await db
                 .select({
                     ...getTableColumns(schema.projects),
+                    soldTokens: sql<number>`SUM(COALESCE(${schema.projectTokens.amount}, 0))::int`,
+                    unsoldTokens: sql<number>`SUM(COALESCE(${schema.projectTokens.unsoldAmount}, 0))::int`,
                     developer: schema.projectDevelopers.name,
                 })
                 .from(schema.projects)
                 .innerJoin(
                     schema.projectDevelopers,
                     eq(schema.projectDevelopers.id, schema.projects.developerId)
-                );
+                )
+                .leftJoin(
+                    schema.projectTokens,
+                    eq(schema.projectTokens.projectId, schema.projects.id)
+                )
+                .groupBy(schema.projects.id, schema.projectDevelopers.name);
 
             return {
                 status: 'ok' as const,
@@ -56,6 +63,8 @@ export const ProjectRoute = new Elysia({
                     t.Object({
                         ...projectSelectSchema.properties,
                         developer: t.String(),
+                        soldTokens: t.Number(),
+                        unsoldTokens: t.Number(),
                     })
                 ),
             }),

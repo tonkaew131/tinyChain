@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { $api } from '@/lib/api';
+
 import { Overview } from '@/components/dashboard/overview';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,12 +13,18 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function CustomerDashboard() {
+export default function Customerashboard() {
+    const {
+        data: stats,
+        isError,
+        isLoading,
+    } = $api.useQuery('get', '/user/stats');
+    
     return (
         <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold tracking-tight">
-                    Customer Dashboard
+                    CustomerDashboard
                 </h2>
                 <Button asChild>
                     <Link href="/projects">Browse Projects</Link>

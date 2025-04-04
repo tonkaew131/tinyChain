@@ -1,15 +1,26 @@
 import { Elysia } from 'elysia';
 
+import { AdminRoute, destroyExpiredTokens } from './routes/admin';
 import { AuthRoute } from './routes/auth';
 import { DeveloperRoute } from './routes/developer';
 import { HelloWorldRoute } from './routes/hello-world';
 import { PaymentRoute } from './routes/payment';
 import { ProjectRoute } from './routes/project';
 import { auth } from './utils/auth';
+import { cron } from '@elysiajs/cron';
 import swagger from '@elysiajs/swagger';
 import { merge } from 'openapi-merge';
 
 const app = new Elysia()
+    .use(
+        cron({
+            name: 'Destroy expired tokens',
+            pattern: '1 0 */1 * *',
+            async run() {
+                await destroyExpiredTokens();
+            },
+        })
+    )
     .use(
         swagger({
             scalarConfig: {
@@ -48,11 +59,10 @@ const app = new Elysia()
     .use(ProjectRoute)
     .use(DeveloperRoute)
     .use(PaymentRoute)
+    .use(AdminRoute)
     .use(HelloWorldRoute)
     .get('/', () => 'Hello Elysia')
     .listen(process.env.PORT || 3001);
-
-const { ALCHEMY_API_URL, WALLET_PRIVATE_KEY } = process.env;
 
 console.log(
     `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`

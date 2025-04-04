@@ -52,6 +52,12 @@ export function DashboardNav() {
             role: 'farmer',
         },
         {
+            title: 'My Wallet',
+            href: '/dashboard/wallet',
+            icon: FileText,
+            role: 'customer',
+        },
+        {
             title: 'My Credits',
             href: '/dashboard/customer/credits',
             icon: Leaf,
@@ -63,24 +69,24 @@ export function DashboardNav() {
             icon: CreditCard,
             role: 'all',
         },
-        {
-            title: 'Analytics',
-            href: `/dashboard/${userRole}/analytics`,
-            icon: BarChart3,
-            role: 'all',
-        },
-        {
-            title: 'Team',
-            href: `/dashboard/${userRole}/team`,
-            icon: Users,
-            role: 'all',
-        },
-        {
-            title: 'Settings',
-            href: `/dashboard/${userRole}/settings`,
-            icon: Settings,
-            role: 'all',
-        },
+        // {
+        //     title: 'Analytics',
+        //     href: `/dashboard/${userRole}/analytics`,
+        //     icon: BarChart3,
+        //     role: 'all',
+        // },
+        // {
+        //     title: 'Team',
+        //     href: `/dashboard/${userRole}/team`,
+        //     icon: Users,
+        //     role: 'all',
+        // },
+        // {
+        //     title: 'Settings',
+        //     href: `/dashboard/${userRole}/settings`,
+        //     icon: Settings,
+        //     role: 'all',
+        // },
     ];
 
     const filteredNavItems = navItems.filter(
