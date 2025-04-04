@@ -16,7 +16,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - ./volume/upload:/app/${ELYSIA_UPLOAD_FOLDER}
+      - ./volume/upload:/app/${UPLOAD_FOLDER}
   web:
     build:
       context: .
