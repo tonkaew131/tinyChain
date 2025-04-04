@@ -26,15 +26,11 @@ RUN bun build \
 	--outfile server \
 	./src/app.ts
 
-RUN ls -la
-RUN pwd
-
 FROM gcr.io/distroless/base
 
 WORKDIR /app
 
 COPY --from=build /app/api/server ./server
-RUN chmod +x ./server
 COPY --from=build /app/api/src/contracts/artifacts ./src/contracts/artifacts
 
 # Environment variables
@@ -54,6 +50,6 @@ ENV UPLOAD_FOLDER=${UPLOAD_FOLDER}
 ARG PORT
 ENV PORT=${PORT}
 
-CMD ["./server"]
+CMD ["/app/server"]
 
 EXPOSE ${PORT}
