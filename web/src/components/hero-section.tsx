@@ -5,6 +5,8 @@ import { ChevronRight, Globe, Sprout } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
+import { BorderBeam } from './magicui/border-beam';
+
 export function HeroSection() {
     return (
         <section className="relative w-full overflow-hidden bg-gradient-to-b from-background via-background/95 to-muted py-16 md:py-24 lg:py-32 xl:py-48">
@@ -44,13 +46,18 @@ export function HeroSection() {
 
                             {/* Stats */}
                             <div className="grid grid-cols-2 gap-4 pt-4 md:grid-cols-3">
-                                <div className="rounded-lg border border-green-200/10 bg-background/50 p-4 backdrop-blur-sm">
+                                <div className="relative rounded-lg border border-green-200/10 bg-background/50 p-4 backdrop-blur-sm">
                                     <p className="text-2xl font-bold text-green-500">
                                         500+
                                     </p>
                                     <p className="text-sm text-muted-foreground">
                                         Projects
                                     </p>
+                                    <BorderBeam
+                                        duration={6}
+                                        size={400}
+                                        className="from-transparent via-green-500 to-transparent"
+                                    />
                                 </div>
                                 <div className="rounded-lg border border-green-200/10 bg-background/50 p-4 backdrop-blur-sm">
                                     <p className="text-2xl font-bold text-blue-500">
@@ -59,6 +66,11 @@ export function HeroSection() {
                                     <p className="text-sm text-muted-foreground">
                                         Farmers
                                     </p>
+                                    <BorderBeam
+                                        duration={6}
+                                        size={300}
+                                        className="from-transparent via-blue-500 to-transparent"
+                                    />
                                 </div>
                                 <div className="col-span-2 rounded-lg border border-green-200/10 bg-background/50 p-4 backdrop-blur-sm md:col-span-1">
                                     <p className="text-2xl font-bold text-emerald-500">
@@ -67,6 +79,11 @@ export function HeroSection() {
                                     <p className="text-sm text-muted-foreground">
                                         CO₂ Offset
                                     </p>
+                                    <BorderBeam
+                                        duration={6}
+                                        size={600}
+                                        className="from-transparent via-emerald-500 to-transparent"
+                                    />
                                 </div>
                             </div>
                         </div>
