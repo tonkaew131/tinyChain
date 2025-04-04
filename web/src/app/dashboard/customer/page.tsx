@@ -1,23 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-
-import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import { ExternalLink } from 'lucide-react';
 
-import { Overview } from '@/components/dashboard/overview';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-import { $api } from '@/libs/api';
 
 export default function Customerashboard() {
     // const {
@@ -52,15 +42,8 @@ export default function Customerashboard() {
         isLoading: false,
     };
 
-    const [activeTab, setActiveTab] = useState('overview');
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const queryParams = new URLSearchParams(window.location.search);
-            const tab = queryParams.get('tab');
-            if (tab) setActiveTab(tab);
-        }
-    }, []);
+    const searchParams = useSearchParams();
+    const tab = searchParams.get('tab') || 'overview';
 
     return (
         <div className="flex-1 space-y-4">
@@ -72,7 +55,7 @@ export default function Customerashboard() {
                     <Link href="/projects">Browse Projects</Link>
                 </Button>
             </div>
-            <Tabs defaultValue={'overview'} className="space-y-4">
+            <Tabs defaultValue={tab} className="space-y-4">
                 <TabsList>
                     <TabsTrigger value="overview">Overview</TabsTrigger>
                     <TabsTrigger value="credits">My Credits</TabsTrigger>

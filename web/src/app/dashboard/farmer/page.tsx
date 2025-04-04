@@ -2,13 +2,10 @@
 
 import Link from 'next/link';
 
-import { useEffect, useState } from 'react';
-
 import { Plus } from 'lucide-react';
 
 import { authClient } from '@/lib/auth-client';
 
-import { Overview } from '@/components/dashboard/overview';
 import { RecentSales } from '@/components/dashboard/recent-sales';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,23 +15,16 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { developerFarmerStats } from '@/action/user';
 import { $api } from '@/libs/api';
 
 // import { useSession } from '@/libs/auth/client';
 // import { useEffect } from 'react';
 
 export default function FarmerDashboard() {
-    const {
-        data: stats,
-        isError,
-        isLoading,
-    } = $api.useQuery('get', '/developer/stats');
+    const { data: stats } = $api.useQuery('get', '/developer/stats');
 
-    const { useSession, signOut } = authClient;
-    const { data } = useSession();
+    const { useSession } = authClient;
 
     return (
         <div className="flex-1 space-y-4">

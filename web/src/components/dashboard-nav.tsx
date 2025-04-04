@@ -5,15 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import type React from 'react';
 
-import {
-    BarChart3,
-    CreditCard,
-    FileText,
-    Home,
-    Leaf,
-    Settings,
-    Users,
-} from 'lucide-react';
+import { CreditCard, FileText, Home, Leaf } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -52,17 +44,17 @@ export function DashboardNav() {
             role: 'farmer',
         },
         {
+            title: 'My Credits',
+            href: '/dashboard/customer?tab=credits',
+            icon: Leaf,
+            role: 'customer',
+        },
+        {
             title: 'My Wallet',
             href: '/dashboard/wallet',
             icon: FileText,
             role: 'customer',
         },
-        // {
-        //     title: 'My Credits',
-        //     href: '/dashboard/customer/credits',
-        //     icon: Leaf,
-        //     role: 'customer',
-        // },
         {
             title: 'Transactions',
             href: `/dashboard/${userRole}/transactions`,
