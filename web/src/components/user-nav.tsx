@@ -97,16 +97,15 @@ export function UserNav() {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                         <DropdownMenuItem asChild>
-                            <Link
-                                href={
-                                    data.user.developerId !== null
-                                        ? '/dashboard/developer'
-                                        : '/dashboard/customer'
-                                }
-                            >
-                                Dashboard
-                            </Link>
+                            <Link href={'/dashboard/customer'}>Dashboard</Link>
                         </DropdownMenuItem>
+                        {data.user.developerId && (
+                            <DropdownMenuItem asChild>
+                                <Link href={'/dashboard/farmer'}>
+                                    Farmer Dashboard
+                                </Link>
+                            </DropdownMenuItem>
+                        )}
                         {/* <DropdownMenuItem asChild>
                             <Link href="/profile">Profile</Link>
                         </DropdownMenuItem> */}

@@ -36,7 +36,7 @@ export default function RootLayout({
                     >
                         <div className="relative flex min-h-screen flex-col">
                             <SiteHeader />
-                            <div className="flex-1">
+                            <div className="flex flex-1 items-center justify-center">
                                 {children}
                             </div>
                             <SiteFooter />

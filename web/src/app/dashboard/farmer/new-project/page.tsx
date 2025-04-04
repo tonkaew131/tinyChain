@@ -19,6 +19,7 @@ export default function NewProjectPage() {
                     buyers.
                 </p>
             </div>
+
             <Card>
                 <CardHeader>
                     <CardTitle>Project Details</CardTitle>

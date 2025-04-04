@@ -88,14 +88,15 @@ export function DashboardNav() {
     );
 
     return (
-        <nav className="grid items-start gap-2">
+        <nav className="grid items-start gap-2 text-primary/75">
             {filteredNavItems.map((item) => (
                 <Button
                     key={item.href}
                     variant={pathname === item.href ? 'default' : 'ghost'}
                     className={cn(
                         'justify-start',
-                        pathname === item.href && 'bg-muted hover:bg-muted'
+                        pathname === item.href &&
+                            'bg-muted text-primary hover:bg-muted'
                     )}
                     asChild
                 >
