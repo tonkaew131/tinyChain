@@ -1080,7 +1080,7 @@ export interface operations {
                             retiredCredits: number;
                             projectSupport: number;
                             tokens: {
-                                tokenId: string;
+                                tokenId: number;
                                 projectId: string;
                                 userId: string;
                                 amount: number;
@@ -1100,7 +1100,7 @@ export interface operations {
                             retiredCredits: number;
                             projectSupport: number;
                             tokens: {
-                                tokenId: string;
+                                tokenId: number;
                                 projectId: string;
                                 userId: string;
                                 amount: number;
@@ -1120,7 +1120,7 @@ export interface operations {
                             retiredCredits: number;
                             projectSupport: number;
                             tokens: {
-                                tokenId: string;
+                                tokenId: number;
                                 projectId: string;
                                 userId: string;
                                 amount: number;

@@ -72,6 +72,7 @@ export const UserRoute = new Elysia({
                     eq(schema.projectTokens.tokenId, schema.userTokens.tokenId)
                 )
                 .where(eq(schema.userTokens.userId, session.user.id));
+
             const [burn] = await db
                 .select({
                     retiredCredits: sum(schema.projectTokens.amount),
@@ -87,6 +88,7 @@ export const UserRoute = new Elysia({
                         gt(schema.projectTokens.endDate, new Date())
                     )
                 );
+
             const [project] = await db
                 .select({
                     totalProjects: count(schema.projects.id),
@@ -106,7 +108,11 @@ export const UserRoute = new Elysia({
                     projectId: schema.projectTokens.projectId,
                 })
                 .from(schema.userTokens)
-                .where(eq(schema.users.id, schema.userTokens.userId));
+                .innerJoin(
+                    schema.projectTokens,
+                    eq(schema.projectTokens.tokenId, schema.userTokens.tokenId)
+                )
+                .where(eq(schema.userTokens.userId, session.user.id));
 
             return {
                 status: 'ok' as const,
@@ -118,7 +124,10 @@ export const UserRoute = new Elysia({
                     retiredCredits: parseFloat(burn.retiredCredits ?? '0'),
                     totalProjects: project.totalProjects,
                     projectSupport: parseFloat(stats.totalCarbonOffset ?? '0'),
-                    tokens: tokens,
+                    tokens: tokens.map((t) => ({
+                        ...t,
+                        amount: parseFloat(t.amount.toString()),
+                    })),
                 },
             };
         },
@@ -133,7 +142,7 @@ export const UserRoute = new Elysia({
                         projectSupport: t.Number(),
                         tokens: t.Array(
                             t.Object({
-                                tokenId: t.String(),
+                                tokenId: t.Number(),
                                 projectId: t.String(),
                                 userId: t.String(),
                                 amount: t.Number(),
