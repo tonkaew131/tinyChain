@@ -1,11 +1,12 @@
+import { type Auth } from '@api/utils/auth';
 import { useMutation } from '@tanstack/react-query';
-import { adminClient } from 'better-auth/client/plugins';
+import { adminClient, inferAdditionalFields } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 
 export const authClient = createAuthClient({
     // Use env instead
     baseURL: 'http://localhost:65535/api/auth',
-    plugins: [adminClient()],
+    plugins: [inferAdditionalFields<Auth>(), adminClient()],
 });
 
 export const useLogin = () => {

@@ -377,7 +377,7 @@ export default function ProjectPage() {
 
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                     <div className="md:col-span-2">
-                        <ProjectGallery images={project.images} />
+                        <ProjectGallery images={[...project.images]} />
 
                         <Card className="mt-8">
                             <CardHeader>
@@ -922,8 +922,9 @@ export default function ProjectPage() {
                             <CardContent className="space-y-4">
                                 <div className="flex items-center gap-4">
                                     <img
-                                        src={'' || '/placeholder.svg'}
-                                        alt={''}
+                                        // TODO: Add developer image
+                                        src={'/placeholder.svg'}
+                                        alt={'Developer Image'}
                                         className="h-16 w-16 rounded-full object-cover"
                                     />
                                     <div>

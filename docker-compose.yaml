@@ -9,7 +9,9 @@ services:
         - DATABASE_URL=${DATABASE_URL}
         - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-        - PORT=${PORT}
+        - WALLET_PRIVATE_KEY=${WALLET_PRIVATE_KEY}
+        - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+        - PORT=3001
     environment:
       - NODE_ENV=production
   web:
@@ -18,5 +20,6 @@ services:
       dockerfile: web/DockerFile
       args:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - PORT=3000
     environment:
       - NODE_ENV=production

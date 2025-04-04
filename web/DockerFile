@@ -1,11 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1
 FROM oven/bun:latest AS base
 
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-ARG PORT
-ENV PORT=${PORT}
-
 # Install dependencies only when needed
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
@@ -23,9 +18,18 @@ COPY /contracts/package.json ./contracts/package.json
 
 # Install dependencies based on the preferred package manager
 RUN bun install
+RUN bun add sharp
 
 # Rebuild the source code only when needed
-FROM base AS builder
+FROM node:20-alpine AS node-base
+
+ENV NEXT_TELEMETRY_DISABLED=1
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ARG PORT
+ENV PORT=${PORT}
+
+FROM node-base AS builder
 WORKDIR /app
 
 # Copy node modules from deps stage
@@ -46,11 +50,10 @@ WORKDIR /app/web
 # ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build the Next.js app
-RUN bun add sharp
-RUN bun run build
+RUN npm run build
 
 # Production image, copy all the files and run next
-FROM base AS runner
+FROM node-base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -64,8 +67,8 @@ RUN adduser --system --uid 1001 nextjs
 WORKDIR /app/web
 
 # Copy public directory
+COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/web/public ./public
-
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./

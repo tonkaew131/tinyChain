@@ -31,6 +31,7 @@ FROM gcr.io/distroless/base
 WORKDIR /app
 
 COPY --from=build /app/api/server server
+COPY --from=build /app/api/src/contracts/artifacts ./src/contracts/artifacts
 
 # Environment variables
 ENV NODE_ENV=production
@@ -40,6 +41,10 @@ ARG BETTER_AUTH_SECRET
 ENV BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ARG WALLET_PRIVATE_KEY
+ENV WALLET_PRIVATE_KEY=${WALLET_PRIVATE_KEY}
+ARG CONTRACT_ADDRESS
+ENV CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
 ARG PORT
 ENV PORT=${PORT}
 

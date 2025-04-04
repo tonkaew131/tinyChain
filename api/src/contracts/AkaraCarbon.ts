@@ -2,12 +2,9 @@ import path from 'node:path';
 
 import { ethers } from 'ethers';
 
-import { getContractsDir } from '@api/utils';
-
-const contractPath = 'artifacts/contracts/AkaraCarbon.sol/AkaraCarbon.json';
-const contract = JSON.parse(
-    await Bun.file(path.join(getContractsDir(), contractPath)).text()
-);
+const contractPath =
+    './src/contracts/artifacts/AkaraCarbon.sol/AkaraCarbon.json';
+const contract = JSON.parse(await Bun.file(path.join(contractPath)).text());
 
 const alchemyProvider = new ethers.AlchemyProvider(
     'sepolia',
