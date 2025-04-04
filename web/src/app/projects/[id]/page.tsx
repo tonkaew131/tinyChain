@@ -35,17 +35,19 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
+import { $api } from '@/libs/api';
+
 export interface TokenData {
     id: string;
-    tokenId: number;
+    tokenId: number | null;
     projectId: string;
     name: string;
     amount: string;
     unsoldAmount: string;
     pricePerToken: string;
-    startDate: string;
-    endDate: string;
-    createdAt: string;
+    startDate: Record<string, never>;
+    endDate: Record<string, never>;
+    createdAt: Record<string, never>;
 }
 
 interface ActivityEvent {
@@ -70,41 +72,55 @@ interface Project {
     developer: string;
 }
 
+type WindowWithEthereum = {
+    ethereum?: { request: (args: { method: string }) => Promise<string[]> };
+};
+
 export default function ProjectPage() {
     const { id } = useParams<{ id: string }>();
     const [isConnected, _setIsConnected] = useState(false);
     const [project, setProject] = useState<Project | null>(null);
-    const [projectTokens, setProjectTokens] = useState<TokenData[]>([]);
+    const [projectTokens, setProjectTokens] = useState<TokenData[] | null>([]);
     const [recentActivity, setRecentActivity] = useState<ActivityEvent[]>([]);
     const [buyAmount, setBuyAmount] = useState<number>(0);
     const [selectedBuyToken, setSelectedBuyToken] = useState<string>('');
     const [, _setCombinedPriceData] = useState<{ [key: string]: number }[]>([]);
+
     const checkIfWalletIsInstalled = () => {
         const { ethereum } = window as WindowWithEthereum;
-        if (!ethereum) {
-            _setIsConnected(false);
+        if (ethereum) {
+            _setIsConnected(true);
         }
     };
+    const projectResult = $api.useQuery('get', '/project/{id}', {
+        params: {
+            path: {
+                id: id,
+            },
+        },
+    });
+    const projectTokenResult = $api.useQuery('get', '/project/{id}/token', {
+        params: {
+            path: {
+                id: id,
+            },
+        },
+    });
 
     useEffect(() => {
-        // Find project from mock data
-        const projectId = id;
-        const foundProject = projects.find((p) => p.id === projectId);
-        if (foundProject) {
-            setProject({
-                ...foundProject,
-                image:
-                    'http://localhost:65535/api/project/' +
-                    projectId +
-                    '/thumbnail',
-            });
-        }
-        // Filter tokens for this project
-        const projectTokens = tokens.filter((t) => t.projectId == projectId);
-        setProjectTokens(projectTokens);
+        console.log(process.env.NEXT_PUBLIC_API_URL);
+        setProject({
+            ...projectResult.data?.data,
+            image:
+                process.env.NEXT_PUBLIC_API_URL +
+                '/project/' +
+                id +
+                '/thumbnail',
+        });
+        setProjectTokens(projectTokenResult.data?.data);
 
         // Combine price history for all tokens
-        const _tokenIds = projectTokens.map((t) => t.id);
+        const _tokenIds = projectTokenResult.data?.data.map((t) => t.id);
         // const dates = tokenPriceHistory[tokenIds[0]].map((d) => d.date);
         // const combined = dates.map((date, i) => {
         //     const dataPoint: { [key: string]: number } = {
@@ -130,29 +146,29 @@ export default function ProjectPage() {
         // setRecentActivity(projectActivities);
 
         // Simulate real-time updates
-        const interval = setInterval(() => {
-            const eventType =
-                Math.random() > 0.5 ? ('list' as const) : ('sale' as const);
-            const newActivity: ActivityEvent = {
-                id: Date.now().toString(),
-                eventType,
-                tokenId: projectTokens[0]?.tokenId || 1,
+        // const interval = setInterval(() => {
+        //     const eventType =
+        //         Math.random() > 0.5 ? ('list' as const) : ('sale' as const);
+        //     const newActivity: ActivityEvent = {
+        //         id: Date.now().toString(),
+        //         eventType,
+        //         tokenId: projectTokens[0]?.tokenId || 1,
 
-                projectId: projectId,
-                amount: Math.floor(Math.random() * 100) + 1,
-                sellerAddress: '0x1234...5678',
-                buyerAddress:
-                    eventType === 'sale' ? '0x9876...4321' : undefined,
-                priceFormatted: `${Number(projectTokens[0]?.pricePerToken).toFixed(2) || '25.00'} THB`,
+        //         projectId: projectId,
+        //         amount: Math.floor(Math.random() * 100) + 1,
+        //         sellerAddress: '0x1234...5678',
+        //         buyerAddress:
+        //             eventType === 'sale' ? '0x9876...4321' : undefined,
+        //         priceFormatted: `${Number(projectTokens[0]?.pricePerToken).toFixed(2) || '25.00'} THB`,
 
-                transactionHash: '0x' + Math.random().toString(16).slice(2),
-                blockTimestamp: new Date(),
-            };
+        //         transactionHash: '0x' + Math.random().toString(16).slice(2),
+        //         blockTimestamp: new Date(),
+        //     };
 
-            setRecentActivity((prev) => [newActivity, ...prev]);
-        }, 10000); // New activity every 10 seconds
+        //     setRecentActivity((prev) => [newActivity, ...prev]);
+        // }, 10000); // New activity every 10 seconds
 
-        return () => clearInterval(interval);
+        // return () => clearInterval(interval);
     }, [id]);
 
     const connectWallet = async () => {
@@ -301,12 +317,12 @@ export default function ProjectPage() {
                                 Recent Activity
                             </h2>
                             <div className="space-y-4">
-                                {recentActivity.slice(0, 5).map((event) => (
+                                {/* {recentActivity.slice(0, 5).map((event) => (
                                     <ActivityItem
                                         key={event.id}
                                         event={event}
                                     />
-                                ))}
+                                ))} */}
                             </div>
                         </div>
                     </div>

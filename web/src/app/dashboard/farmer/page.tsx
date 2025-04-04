@@ -4,8 +4,6 @@ import Link from 'next/link';
 
 import { Plus } from 'lucide-react';
 
-import { authClient } from '@/lib/auth-client';
-
 import { RecentSales } from '@/components/dashboard/recent-sales';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,13 +16,8 @@ import {
 
 import { $api } from '@/libs/api';
 
-// import { useSession } from '@/libs/auth/client';
-// import { useEffect } from 'react';
-
 export default function FarmerDashboard() {
     const { data: stats } = $api.useQuery('get', '/developer/stats');
-
-    const { useSession } = authClient;
 
     return (
         <div className="flex-1 space-y-4">

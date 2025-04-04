@@ -82,6 +82,7 @@ export function SignupForm() {
                 email: data.email,
                 password: data.password,
                 role: data.role,
+                balance: 0,
             },
             {
                 onSuccess: ({ data: _, error }) => {
