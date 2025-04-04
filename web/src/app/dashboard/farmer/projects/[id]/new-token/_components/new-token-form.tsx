@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { LeafyGreenIcon } from 'lucide-react';
 import { z } from 'zod';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -60,8 +61,14 @@ export default function NewTokenForm(props: NewTokenFormProps) {
                 ...values,
                 amount: values.amount.toString(),
                 pricePerToken: values.pricePerToken.toString(),
-                startDate: values.startDate.toISOString(),
-                endDate: values.endDate.toISOString(),
+                startDate: values.startDate.toISOString() as unknown as Record<
+                    string,
+                    never
+                >,
+                endDate: values.endDate.toISOString() as unknown as Record<
+                    string,
+                    never
+                >,
             },
             params: {
                 path: {
@@ -93,7 +100,14 @@ export default function NewTokenForm(props: NewTokenFormProps) {
                             />
                         </div>
 
-                        <div className="py-1">Status</div>
+                        <div className="py-1">
+                            <div className="flex items-center gap-1">
+                                <p className="font-semibold">Status:</p>
+                                <Badge className="px-1" variant="yellow">
+                                    pending
+                                </Badge>
+                            </div>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>

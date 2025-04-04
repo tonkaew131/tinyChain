@@ -57,12 +57,12 @@ export function DashboardNav() {
             icon: FileText,
             role: 'customer',
         },
-        {
-            title: 'My Credits',
-            href: '/dashboard/customer/credits',
-            icon: Leaf,
-            role: 'customer',
-        },
+        // {
+        //     title: 'My Credits',
+        //     href: '/dashboard/customer/credits',
+        //     icon: Leaf,
+        //     role: 'customer',
+        // },
         {
             title: 'Transactions',
             href: `/dashboard/${userRole}/transactions`,

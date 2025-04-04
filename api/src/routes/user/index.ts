@@ -103,6 +103,7 @@ export const UserRoute = new Elysia({
                     userId: schema.userTokens.userId,
                     amount: schema.userTokens.amount,
                     boughtAt: schema.userTokens.boughtAt,
+                    projectId: schema.projectTokens.projectId,
                 })
                 .from(schema.userTokens)
                 .where(eq(schema.users.id, schema.userTokens.userId));
@@ -133,9 +134,10 @@ export const UserRoute = new Elysia({
                         tokens: t.Array(
                             t.Object({
                                 tokenId: t.String(),
+                                projectId: t.String(),
                                 userId: t.String(),
                                 amount: t.Number(),
-                                boughtAt: t.String(),
+                                boughtAt: t.Date(),
                             })
                         ),
                     }),

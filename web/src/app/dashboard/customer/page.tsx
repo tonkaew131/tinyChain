@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { $api } from '@/lib/api';
+import { ExternalLink } from 'lucide-react';
 
 import { Overview } from '@/components/dashboard/overview';
 import { Button } from '@/components/ui/button';
@@ -13,18 +13,46 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { $api } from '@/libs/api';
+
 export default function Customerashboard() {
-    const {
-        data: stats,
-        isError,
-        isLoading,
-    } = $api.useQuery('get', '/user/stats');
-    
+    // const {
+    //     data: stats,
+    //     isError,
+    //     isLoading,
+    // } = $api.useQuery('get', '/user/stats');
+    const stats = {
+        data: {
+            totalCarbonOffset: 2500,
+            activeCredits: 1200,
+            retiredCredits: 1300,
+            projectsSupported: 8,
+            tokens: [
+                {
+                    tokenId: 1,
+                    projectId: 'P1006',
+                    userId: '123',
+                    amount: 1000,
+                    boughtAt: '2023-01-01',
+                },
+                {
+                    tokenId: 2,
+                    projectId: 'P1007',
+                    userId: '123',
+                    amount: 1000,
+                    boughtAt: '2023-01-01',
+                },
+            ],
+        },
+        isError: false,
+        isLoading: false,
+    };
+
     return (
         <div className="flex-1 space-y-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold tracking-tight">
-                    CustomerDashboard
+                    Customer Dashboard
                 </h2>
                 <Button asChild>
                     <Link href="/projects">Browse Projects</Link>
@@ -34,7 +62,7 @@ export default function Customerashboard() {
                 <TabsList>
                     <TabsTrigger value="overview">Overview</TabsTrigger>
                     <TabsTrigger value="credits">My Credits</TabsTrigger>
-                    <TabsTrigger value="impact">Impact</TabsTrigger>
+                    {/* <TabsTrigger value="impact">Impact</TabsTrigger> */}
                 </TabsList>
                 <TabsContent value="overview" className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -57,7 +85,9 @@ export default function Customerashboard() {
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">2,500</div>
+                                <div className="text-2xl font-bold">
+                                    {stats.data?.totalCarbonOffset}
+                                </div>
                                 <p className="text-xs text-muted-foreground">
                                     tons CO₂e offset
                                 </p>
@@ -84,7 +114,9 @@ export default function Customerashboard() {
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">1,200</div>
+                                <div className="text-2xl font-bold">
+                                    {stats.data?.activeCredits}
+                                </div>
                                 <p className="text-xs text-muted-foreground">
                                     Available credits
                                 </p>
@@ -116,10 +148,10 @@ export default function Customerashboard() {
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">1,300</div>
-                                <p className="text-xs text-muted-foreground">
-                                    Permanently retired
-                                </p>
+                                <div className="text-2xl font-bold">
+                                    {stats.data?.retiredCredits}
+                                </div>
+                                <p className="text-xs text-muted-foreground"></p>
                             </CardContent>
                         </Card>
                         <Card>
@@ -141,14 +173,14 @@ export default function Customerashboard() {
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">8</div>
-                                <p className="text-xs text-muted-foreground">
-                                    Across 5 countries
-                                </p>
+                                <div className="text-2xl font-bold">
+                                    {stats.data?.projectsSupported}
+                                </div>
+                                <p className="text-xs text-muted-foreground"></p>
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                    {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                         <Card className="col-span-4">
                             <CardHeader>
                                 <CardTitle>Carbon Offset Over Time</CardTitle>
@@ -214,6 +246,41 @@ export default function Customerashboard() {
                                 </div>
                             </CardContent>
                         </Card>
+                    </div> */}
+                </TabsContent>
+                <TabsContent value="credits" className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        {stats.data?.tokens.map((token) => (
+                            <Card key={token.tokenId}>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">
+                                        {token.projectId}
+                                    </CardTitle>
+                                    <a
+                                        href={`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${token.projectId}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm text-muted-foreground hover:text-primary"
+                                    >
+                                        <ExternalLink className="h-4 w-4" />
+                                    </a>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">
+                                        {token.amount}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        {token.boughtAt}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {token.tokenId}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {token.userId}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        ))}
                     </div>
                 </TabsContent>
             </Tabs>

@@ -138,8 +138,16 @@ export const ProjectRoute = new Elysia({
         '/:id',
         async (context) => {
             const [project] = await db
-                .select()
+                .select({
+                    ...getTableColumns(schema.projects),
+                    developer: schema.projectDevelopers.name,
+                    developerJoinedAt: schema.projectDevelopers.createdAt,
+                })
                 .from(schema.projects)
+                .innerJoin(
+                    schema.projectDevelopers,
+                    eq(schema.projectDevelopers.id, schema.projects.developerId)
+                )
                 .where(eq(schema.projects.id, context.params.id));
 
             if (!project) {
@@ -154,7 +162,11 @@ export const ProjectRoute = new Elysia({
         {
             response: t.Object({
                 status: t.Literal('ok'),
-                data: projectSelectSchema,
+                data: t.Object({
+                    ...projectSelectSchema.properties,
+                    developer: t.String(),
+                    developerJoinedAt: t.Date(),
+                }),
             }),
         }
     )
@@ -262,6 +274,14 @@ export const ProjectRoute = new Elysia({
                     })
                     .returning();
 
+                await tx.insert(schema.transactions).values({
+                    id: generateNanoId(64),
+                    txId: bcTx.hash,
+                    type: 'mint',
+                    message: `40 tokens listed by ${developer.name} for ${body.pricePerToken} THB`,
+                    userId: session.user.id,
+                });
+
                 return { ...token, transactionHash: bcTx.hash, bcTx: bcTx };
             });
 
@@ -311,6 +331,14 @@ export const ProjectRoute = new Elysia({
                     '0x'
                 );
                 await bcTx.wait();
+
+                await tx.insert(schema.transactions).values({
+                    id: generateNanoId(64),
+                    txId: bcTx.hash,
+                    type: 'buy',
+                    message: `Bought ${body.amount} tokens from ${bcTx.hash}`,
+                    userId: session.user.id,
+                });
 
                 const [token] = await tx
                     .select()

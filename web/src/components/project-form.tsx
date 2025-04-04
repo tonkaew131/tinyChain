@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 
-import { $api } from '@/libs/api';
+import { $api, JsonToFormData } from '@/libs/api';
 
 const projectFormSchema = z.object({
     title: z
@@ -32,7 +32,7 @@ const projectFormSchema = z.object({
 });
 
 export function ProjectForm() {
-    const [isLoading, setIsLoading] = useState(false);
+    const { mutate, isPending } = $api.useMutation('post', '/project/');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const form = useForm({
@@ -45,23 +45,20 @@ export function ProjectForm() {
     });
 
     async function onSubmit(data: z.infer<typeof projectFormSchema>) {
-        console.log('Form data:', data);
-
-        setIsLoading(true);
-        try {
-            await $api.useMutation('post', '/project/').mutate({
-                body: {
-                    name: data.title,
-                    location: data.location,
-                    description: data.description,
-                    thumbnail: ' ',
-                },
-            });
-            console.log('Project submitted:', data);
-        } catch (error) {
-            console.error('Submission error:', error);
+        if (!selectedFile) {
+            return alert('Please select a file');
         }
-        setIsLoading(false);
+
+        mutate({
+            body: {
+                name: data.title,
+                location: data.location,
+                description: data.description,
+                type: 'agriculture',
+                thumbnail: selectedFile,
+            },
+            bodySerializer: JsonToFormData,
+        });
     }
 
     return (
@@ -165,8 +162,8 @@ export function ProjectForm() {
                 </div>
 
                 <div className="flex justify-end gap-4">
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? 'Submitting...' : 'Submit Project'}
+                    <Button type="submit" disabled={isPending}>
+                        {isPending ? 'Submitting...' : 'Submit Project'}
                     </Button>
                 </div>
             </form>

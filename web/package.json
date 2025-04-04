@@ -8,7 +8,7 @@
         "start": "next start",
         "lint": "next lint",
         "format": "prettier --write --list-different .",
-        "api:gen": "openapi-typescript http://localhost:3001/swagger/json -o ./src/libs/api/api.d.ts"
+        "api:gen": "tsx ./src/libs/api/generate-type.ts"
     },
     "dependencies": {
         "@heroui/modal": "^2.2.13",

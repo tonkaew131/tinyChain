@@ -179,3 +179,24 @@ export const userWallets = pgTable('user_wallet', {
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().notNull(),
 });
+
+export const transactionTypeEnum = pgEnum('transaction_type', [
+    'mint',
+    'buy',
+    'burn',
+    'sell',
+]);
+export const transactions = pgTable('transaction', {
+    id: text().primaryKey(),
+    txId: text().notNull(),
+    type: transactionTypeEnum().notNull(),
+    message: text().notNull(),
+    userId: text()
+        .notNull()
+        .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp({
+        mode: 'date',
+    })
+        .defaultNow()
+        .notNull(),
+});
