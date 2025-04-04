@@ -6,11 +6,13 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { ArrowLeft, Calendar, Globe, Leaf, MapPin } from 'lucide-react';
+
 import { toast } from 'sonner';
 
 import {
     activities,
     projects,
+    tokenPriceHistory,
     tokens,
 } from '@/lib/mock-data';
 
@@ -26,6 +28,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+
 import {
     Select,
     SelectContent,
@@ -122,6 +125,7 @@ export default function ProjectPage() {
         //     );
         // setRecentActivity(projectActivities);
 
+
         // Simulate real-time updates
         const interval = setInterval(() => {
             const eventType =
@@ -130,19 +134,20 @@ export default function ProjectPage() {
                 id: Date.now().toString(),
                 eventType,
                 tokenId: projectTokens[0]?.tokenId || 1,
+
                 projectId: projectId,
                 amount: Math.floor(Math.random() * 100) + 1,
                 sellerAddress: '0x1234...5678',
                 buyerAddress:
                     eventType === 'sale' ? '0x9876...4321' : undefined,
                 priceFormatted: `${Number(projectTokens[0]?.pricePerToken).toFixed(2) || '25.00'} THB`,
+
                 transactionHash: '0x' + Math.random().toString(16).slice(2),
                 blockTimestamp: new Date(),
             };
 
             setRecentActivity((prev) => [newActivity, ...prev]);
         }, 10000); // New activity every 10 seconds
-
 
         return () => clearInterval(interval);
     }, [id]);
@@ -171,7 +176,6 @@ export default function ProjectPage() {
         }
         toast.success(`Buying ${amount} tokens of ID ${tokenId}`);
     };
-
     if (!project) return <div>Loading...</div>;
 
     return (
@@ -188,6 +192,7 @@ export default function ProjectPage() {
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">
                                 {project.name}
+
                             </h1>
                             <div className="mt-2 flex items-center gap-2">
                                 <Badge>{project.type}</Badge>
@@ -203,7 +208,6 @@ export default function ProjectPage() {
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                     <div className="md:col-span-2">
                         <ProjectGallery images={[project.image]} />
-
                         <Card className="mt-8">
                             <CardHeader>
                                 <CardTitle>Project Overview</CardTitle>
@@ -286,8 +290,6 @@ export default function ProjectPage() {
                                 </div>
                             </CardContent>
                         </Card>
-
-
                         <div className="mt-8">
                             <h2 className="mb-4 text-2xl font-bold">
                                 Recent Activity
@@ -329,6 +331,7 @@ export default function ProjectPage() {
                                                     Token {token.id} (
                                                     {/* {token.year}) -{' '}
                                                     {token.price.toLocaleString()}{' '} */}
+
                                                     THB
                                                 </SelectItem>
                                             ))}

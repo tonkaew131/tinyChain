@@ -49,16 +49,25 @@ contract AkaraCarbon is ERC1155, Ownable, ERC1155Supply {
     ) public onlyOwner {
         _mintBatch(to, ids, amounts, data);
     }
+
     function isExpired(uint256 tokenId) public view returns (bool) {
         return tokens[tokenId].expiry < block.timestamp;
     }
 
-    function destoryExpired(uint256 tokenId) public {
-        require(isExpired(tokenId), 'AkaraCarbon: NOT_EXPIRED');
-        uint256 balance = balanceOf(msg.sender, tokenId);
-        require(balance > 0, 'AkaraCarbon: NO_BALANCE');
-        _burn(msg.sender, tokenId, balance);
-        delete tokens[tokenId];
+    function destoryExpired(
+        uint256[] memory tokenIds,
+        address[] memory tokenOwners
+    ) public onlyOwner {
+        require(
+            tokenIds.length == tokenOwners.length,
+            'AkaraCarbon: LENGTH_MISMATCH'
+        );
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            require(isExpired(tokenIds[i]), 'AkaraCarbon: NOT_EXPIRED');
+
+            _burn(tokenOwners[i], tokenIds[i], 1);
+            delete tokens[tokenIds[i]];
+        }
     }
 
     function _update(

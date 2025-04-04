@@ -39,7 +39,12 @@ export function UserNav() {
 
     return (
         <>
-            <WalletIcon />
+            <div
+                className="tooltip tooltip-bottom"
+                data-tip={`฿${data.user.balance}`}
+            >
+                <WalletIcon />
+            </div>
             <MetamaskTip />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

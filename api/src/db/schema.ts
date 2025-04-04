@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
     boolean,
     decimal,
@@ -79,16 +79,25 @@ export const verifications = pgTable('verification', {
 export const projectIdSequence = pgSequence('project_id_seq', {
     startWith: 1000,
 });
+export const projectTypeEnum = pgEnum('project_type', [
+    'agriculture',
+    'forestry',
+    'livestock',
+    'renewable',
+    'conservation',
+]);
 export const projects = pgTable('project', {
     id: text()
         .primaryKey()
         .default(sql.raw(`'P' || nextval('project_id_seq')::TEXT`)),
+    type: projectTypeEnum().default('agriculture').notNull(),
+    name: text().notNull(),
+    location: text().notNull(),
+    description: text().default('').notNull(),
+
     developerId: text()
         .notNull()
         .references(() => projectDevelopers.id),
-    location: text().notNull(),
-    name: text().notNull(),
-    description: text().default('').notNull(),
 
     createdAt: timestamp().defaultNow().notNull(),
     updatedAt: timestamp().defaultNow().notNull(),
@@ -106,14 +115,18 @@ export const projectTokens = pgTable('project_token', {
     unsoldAmount: decimal().notNull(),
     pricePerToken: decimal().default('0').notNull(),
     startDate: timestamp({
-        mode: 'string',
+        mode: 'date',
     }).notNull(),
     endDate: timestamp({
-        mode: 'string',
+        mode: 'date',
     }).notNull(),
 
     createdAt: timestamp().defaultNow().notNull(),
 });
+
+export const projectTokensRelations = relations(projectTokens, ({ many }) => ({
+    users: many(userTokens),
+}));
 
 export const projectDeveloperIdSequence = pgSequence(
     'project_developer_id_seq',
@@ -121,6 +134,7 @@ export const projectDeveloperIdSequence = pgSequence(
         startWith: 1000,
     }
 );
+
 export const projectDevelopers = pgTable('project_developer', {
     id: text()
         .primaryKey()
@@ -149,6 +163,13 @@ export const userTokens = pgTable(
     ]
 );
 
+export const userTokensRelations = relations(userTokens, ({ one }) => ({
+    token: one(projectTokens, {
+        fields: [userTokens.tokenId],
+        references: [projectTokens.tokenId],
+    }),
+}));
+
 export const userWallets = pgTable('user_wallet', {
     id: text().primaryKey(),
     userId: text()
@@ -157,4 +178,25 @@ export const userWallets = pgTable('user_wallet', {
     amount: decimal().notNull().default('0'),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().notNull(),
+});
+
+export const transactionTypeEnum = pgEnum('transaction_type', [
+    'mint',
+    'buy',
+    'burn',
+    'sell',
+]);
+export const transactions = pgTable('transaction', {
+    id: text().primaryKey(),
+    txId: text().notNull(),
+    type: transactionTypeEnum().notNull(),
+    message: text().notNull(),
+    userId: text()
+        .notNull()
+        .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp({
+        mode: 'date',
+    })
+        .defaultNow()
+        .notNull(),
 });

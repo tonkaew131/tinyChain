@@ -106,6 +106,20 @@
             "when": 1743105404185,
             "tag": "0014_Add balance to users",
             "breakpoints": true
+        },
+        {
+            "idx": 15,
+            "version": "7",
+            "when": 1743774729393,
+            "tag": "0015_Add type to project",
+            "breakpoints": true
+        },
+        {
+            "idx": 16,
+            "version": "7",
+            "when": 1743784140372,
+            "tag": "0016_Add transactions log",
+            "breakpoints": true
         }
     ]
 }
