@@ -11,6 +11,7 @@ services:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
         - WALLET_PRIVATE_KEY=${WALLET_PRIVATE_KEY}
         - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+        - UPLOAD_FOLDER=${UPLOAD_FOLDER}
         - PORT=3001
     environment:
       - NODE_ENV=production
@@ -23,3 +24,5 @@ services:
         - PORT=3000
     environment:
       - NODE_ENV=production
+    volumes:
+      - ./volume/upload:/app/${ELYSIA_UPLOAD_FOLDER}

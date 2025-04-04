@@ -25,6 +25,8 @@ const projectDeveloperInsertSchema = createInsertSchema(
     schema.projectDevelopers
 );
 
+const uploadDir = process.env.UPLOAD_FOLDER || '../volume/upload';
+
 export const ProjectRoute = new Elysia({
     prefix: '/project',
 })
@@ -91,11 +93,7 @@ export const ProjectRoute = new Elysia({
                     })
                     .returning();
 
-                const basedDir = path.join(
-                    '../volume/upload',
-                    'projects',
-                    project.id
-                );
+                const basedDir = path.join(uploadDir, 'projects', project.id);
                 await fs.mkdir(path.join(basedDir), {
                     recursive: true,
                 });
@@ -158,7 +156,7 @@ export const ProjectRoute = new Elysia({
         } = context;
 
         const file = Bun.file(
-            path.join('../volume/upload', 'projects', id, 'thumbnail')
+            path.join(uploadDir, 'projects', id, 'thumbnail')
         );
         if ((await file.exists()) === false) {
             return error(404);
