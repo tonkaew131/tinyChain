@@ -273,7 +273,7 @@ export default function ProjectPage() {
                                                                     <span className="text-muted-foreground">
                                                                         {' '}
                                                                         {
-                                                                            e.amount
+                                                                            e.unsoldAmount
                                                                         }{' '}
                                                                         tons
                                                                     </span>
