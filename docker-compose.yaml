@@ -13,6 +13,7 @@ services:
         - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
         - ALCHEMY_API_URL=${ALCHEMY_API_URL}
         - ALCHEMY_API_KEY=${ALCHEMY_API_KEY}
+        - WALLET_PUBLIC_KEY=${WALLET_PUBLIC_KEY}
         - UPLOAD_FOLDER="./upload"
         - PORT=3001
     environment:
