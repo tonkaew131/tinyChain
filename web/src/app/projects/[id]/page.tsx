@@ -11,7 +11,6 @@ import { ExternalLinkIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useUpdateProfile } from '@/lib/auth-client';
-import { tokens } from '@/lib/mock-data';
 
 import { ActivityItem } from '@/components/activity-item';
 import { ProjectGallery } from '@/components/project-gallery';
@@ -262,24 +261,27 @@ export default function ProjectPage() {
                                                 Carbon Credits
                                             </h3>
                                             <p>
-                                                {tokens.map((e) => {
-                                                    return (
-                                                        <>
-                                                            <div>
-                                                                <span>
-                                                                    - {e.name}
-                                                                </span>
-                                                                <span className="text-muted-foreground">
-                                                                    {' '}
-                                                                    {
-                                                                        e.amount
-                                                                    }{' '}
-                                                                    tons
-                                                                </span>
-                                                            </div>
-                                                        </>
-                                                    );
-                                                })}
+                                                {projectTokenResult?.data?.data.map(
+                                                    (e) => {
+                                                        return (
+                                                            <>
+                                                                <div>
+                                                                    <span>
+                                                                        -{' '}
+                                                                        {e.name}
+                                                                    </span>
+                                                                    <span className="text-muted-foreground">
+                                                                        {' '}
+                                                                        {
+                                                                            e.amount
+                                                                        }{' '}
+                                                                        tons
+                                                                    </span>
+                                                                </div>
+                                                            </>
+                                                        );
+                                                    }
+                                                )}
                                             </p>
                                         </div>
                                         <div>
