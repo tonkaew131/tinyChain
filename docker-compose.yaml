@@ -19,7 +19,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - ./volume/upload:./upload
+      - ./volume/upload:/app/upload
   web:
     build:
       context: .
